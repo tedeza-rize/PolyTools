@@ -10,26 +10,6 @@
   <strong>개발자·비개발자 모두를 위한 올인원 유틸리티 모음</strong>
 </p>
 
-<p align="center">
-  <a href="https://github.com/tedeza-rize/PolyTools/actions">
-    <img src="https://img.shields.io/github/workflow/status/tedeza-rize/PolyTools/CI?label=build" alt="build status">
-  </a>
-  <a href="https://github.com/tedeza-rize/PolyTools/stargazers">
-    <img src="https://img.shields.io/github/stars/tedeza-rize/PolyTools?style=social" alt="GitHub stars">
-  </a>
-  <a href="https://github.com/tedeza-rize/PolyTools/releases">
-    <img src="https://img.shields.io/github/v/release/tedeza-rize/PolyTools" alt="Latest release">
-  </a>
-</p>
-
-<p align="center">
-  <a href="#✨-주요-기능">✨ 주요 기능</a> •
-  <a href="#⚡️-설치-및-실행">⚡️ 설치 및 실행</a> •
-  <a href="#💾-다운로드">💾 다운로드</a> •
-  <a href="#🔗-연관-프로젝트">🔗 연관 프로젝트</a> •
-  <a href="#📜-라이선스">📜 라이선스</a>
-</p>
-
 ---
 
 ## ✨ 주요 기능
