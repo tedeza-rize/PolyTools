@@ -1,0 +1,101 @@
+/* App.css */
+:root {
+  --color-background: #ffffff;
+  --color-text: #1a1a1a;
+  --color-primary: #61dafb;
+  --color-secondary: #f0f0f0;
+  --color-scrollbar-track: #e9ecef;
+  --color-scrollbar-thumb: #ced4da;
+  --color-scrollbar-thumb-hover: #adb5bd;
+}
+
+[data-theme="dark"] {
+  --color-background: #1a1a1a;
+  --color-text: #ffffff;
+  --color-primary: #61dafb;
+  --color-secondary: #282c34;
+  --color-scrollbar-track: #2c2c2c;
+  --color-scrollbar-thumb: #555555;
+  --color-scrollbar-thumb-hover: #888888;
+}
+
+/* 1. html, body, #root 높이·너비 100% 확보 */
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100vh; /* Use vh for full viewport height */
+  width: 100vw; /* Ensure full viewport width */
+  overflow: hidden; /* Prevent scrollbars from appearing due to flex layout */
+}
+
+.app {
+  display: flex;
+  height: 100vh; /* Ensure app takes full viewport height */
+  width: 100vw; /* Ensure app takes full viewport width */
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
+
+.menu {
+  width: 200px;
+  background: var(--color-secondary);
+  padding: 1rem;
+  flex-shrink: 0; /* Prevent sidebar from shrinking */
+}
+
+.menu ul {
+  list-style: none;
+  padding: 0;
+}
+
+.menu li {
+  margin-bottom: 1rem;
+}
+
+.menu a {
+  text-decoration: none;
+  color: var(--color-text);
+}
+
+.main-content {
+  flex: 1; /* Allow MainContent to take up remaining space */
+  transition: margin-left 0.2s ease;
+  margin-left: 280px; /* 기본 사이드바 너비 */
+  display: flex; /* Enable flexbox for content inside MainContent */
+  flex-direction: column; /* Stack content vertically */
+}
+
+.main-content.sidebar-collapsed {
+  margin-left: 80px; /* 축소 시 사이드바 너비 */
+}
+
+.content-wrapper {
+  padding: 24px;
+  min-height: 100%; /* Ensure content-wrapper takes full height of main-content */
+  background-color: var(--color-background);
+  flex: 1; /* Allow content-wrapper to take up remaining space */
+}
+
+.content {
+  flex: 1;
+  padding: 2rem;
+}
+
+/* Custom Scrollbar */
+.sidebar-menu-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.sidebar-menu-container::-webkit-scrollbar-track {
+  background: var(--color-scrollbar-track);
+  border-radius: 4px;
+}
+
+.sidebar-menu-container::-webkit-scrollbar-thumb {
+  background: var(--color-scrollbar-thumb);
+  border-radius: 4px;
+}
+
+.sidebar-menu-container::-webkit-scrollbar-thumb:hover {
+  background: var(--color-scrollbar-thumb-hover);
+}

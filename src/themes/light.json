@@ -1,0 +1,13 @@
+{
+  "name": "Light",
+  "colors": {
+    "primary": "#007bff",
+    "secondary": "#e9ecef",
+    "background": "#f8f9fa",
+    "text": "#212529",
+    "border": "#dee2e6",
+    "scrollbar_track": "#e9ecef",
+    "scrollbar_thumb": "#ced4da",
+    "scrollbar_thumb_hover": "#adb5bd"
+  }
+}

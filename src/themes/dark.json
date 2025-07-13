@@ -1,0 +1,13 @@
+{
+  "name": "Dark",
+  "colors": {
+    "primary": "#3f8ee4",
+    "secondary": "#2c2c2c",
+    "background": "#1a1a1a",
+    "text": "#e0e0e0",
+    "border": "#3a3a3a",
+    "scrollbar_track": "#2c2c2c",
+    "scrollbar_thumb": "#555555",
+    "scrollbar_thumb_hover": "#888888"
+  }
+}
