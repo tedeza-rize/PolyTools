@@ -112,99 +112,123 @@ const Sidebar = ({
 
   /* ---------------- 메뉴 아이템 생성 (메모이즈) ---------------- */
   const menuItems = useMemo(
-    () =>
-      categories
-        .map((category) => {
-          const items = getToolsByCategory(category.id)
-          const isSimple = category.id === 'home' || category.id === 'settings'
-          const isSelectedParent = selectedKeys.includes(category.id)
+  () =>
+    categories
+      .map((category) => {
+        const items = getToolsByCategory(category.id)
+        const isSimple = category.id === 'home' || category.id === 'settings'
+        const isSelectedParent = selectedKeys.includes(category.id)
 
-          // 검색 중 하위 결과가 없으면 해당 카테고리 숨김
-          if (!isSimple && items.length === 0 && searchTerm !== '') return null
+        // 검색 중 하위 결과가 없으면 해당 카테고리 숨김
+        if (!isSimple && items.length === 0 && searchTerm !== '') return null
 
-          /* 부모·자식 공통 속성 */
-          const parentStyle = isSelectedParent
-            ? { backgroundColor: colors.primary, borderRadius: 6 }
-            : undefined
-          const parentIconColor = isSelectedParent ? colors.text : category.color
+        /* 부모·자식 공통 스타일 */
+        const parentStyle = isSelectedParent
+          ? { backgroundColor: colors.primary, borderRadius: 6 }
+          : undefined
+        const parentIconColor = isSelectedParent ? colors.text : category.color
 
-          return {
-            key: category.id,
-            icon: <span style={{ color: parentIconColor }}>{category.icon}</span>,
-            label: (
-              <Tooltip
-                title={collapsed ? t(category.name) : ''}
-                placement="right"
-                mouseEnterDelay={0.5}
-                color={theme === 'light' ? '#fff' : colors.secondary}
-              >
-                <Space>
-                  <Text
-                    strong={isSelectedParent}
-                    style={{
-                      color: isSelectedParent ? colors.text : colors.text,
-                    }}
-                  >
-                    {t(category.name)}
-                  </Text>
-                  {!isSimple && !collapsed && items.length > 0 && (
-                    <Badge
-                      count={items.length}
-                      size="small"
-                      style={{ backgroundColor: category.color }}
-                    />
-                  )}
-                </Space>
-              </Tooltip>
-            ),
-            style: parentStyle,
-            children: isSimple
-              ? undefined
-              : items.map((tool) => ({
-                  key: tool.id,
-                  icon: (
-                    <span
-                      style={{
-                        fontSize: 14,
-                      }}
-                    >
-                      {tool.icon}
-                    </span>
-                  ),
-                  label: (
+        /* collapsed 상태일 때만 아이콘에 커스텀 Tooltip 부여 */
+        const iconNode = collapsed ? (
+          <Tooltip
+            title={t(category.name)}
+            placement="right"
+            mouseEnterDelay={0.5}
+            color={theme === 'light' ? '#fff' : colors.secondary}
+            overlayInnerStyle={{ color: colors.text }}
+          >
+            <span style={{ color: parentIconColor }}>{category.icon}</span>
+          </Tooltip>
+        ) : (
+          <span style={{ color: parentIconColor }}>{category.icon}</span>
+        )
+
+        return {
+          key: category.id,
+          icon: iconNode,
+
+          /* label 은 펼쳐진 상태에서만 보이므로 기존 그대로 두기 */
+          label: (
+            <Tooltip
+              title={collapsed ? '' : t(category.name)}
+              placement="right"
+              mouseEnterDelay={0.5}
+              color={theme === 'light' ? '#fff' : colors.secondary}
+            >
+              <Space>
+                <Text
+                  strong={isSelectedParent}
+                  style={{ color: colors.text }}
+                >
+                  {t(category.name)}
+                </Text>
+                {!isSimple && !collapsed && items.length > 0 && (
+                  <Badge
+                    count={items.length}
+                    size="small"
+                    style={{ backgroundColor: category.color }}
+                  />
+                )}
+              </Space>
+            </Tooltip>
+          ),
+
+          title: '',       // 기본 AntD 툴팁 완전 비활성화
+          style: parentStyle,
+
+          /* 자식(툴) 아이템 */
+          children: isSimple
+            ? undefined
+            : items.map((tool) => ({
+                key: tool.id,
+                icon: (
+                  collapsed ? (
+                    /* collapsed 상태에선 자식들도 아이콘에 Tooltip */
                     <Tooltip
-                      title={collapsed ? tool.name : ''}
+                      title={tool.name}
                       placement="right"
                       mouseEnterDelay={0.5}
                       color={colors.secondary}
                       overlayInnerStyle={{ color: colors.text }}
                     >
-                      <Text style={{ color: colors.text }}>{tool.name}</Text>
+                      <span style={{ fontSize: 14 }}>{tool.icon}</span>
                     </Tooltip>
-                  ),
-                  onClick: () => {
-                    onToolSelect(tool.id)
-                  },
-                })),
-            onClick: isSimple
-              ? () => {
-                  onToolSelect(category.id)
-                }
-              : undefined,
-          }
-        })
-        .filter(Boolean) as any[],
-    [
-      colors.primary,
-      colors.text,
-      collapsed,
-      getToolsByCategory,
-      searchTerm,
-      selectedKeys,
-      t,
-      onToolSelect,
-    ],
-  )
+                  ) : (
+                    <span style={{ fontSize: 14 }}>{tool.icon}</span>
+                  )
+                ),
+                label: (
+                  <Tooltip
+                    title={collapsed ? '' : tool.name}
+                    placement="right"
+                    mouseEnterDelay={0.5}
+                    color={colors.secondary}
+                    overlayInnerStyle={{ color: colors.text }}
+                  >
+                    <Text style={{ color: colors.text }}>{tool.name}</Text>
+                  </Tooltip>
+                ),
+                title: '',   // 기본 툴팁 비활성화
+                onClick: () => onToolSelect(tool.id),
+              })),
+
+          onClick: isSimple ? () => onToolSelect(category.id) : undefined,
+        }
+      })
+      .filter(Boolean) as any[],
+  [
+    collapsed,
+    colors.primary,
+    colors.text,
+    colors.secondary,
+    getToolsByCategory,
+    searchTerm,
+    selectedKeys,
+    t,
+    onToolSelect,
+    theme,
+  ],
+)
 
   return (
     <Sider
