@@ -44,5 +44,13 @@
   "base64_tool_encode": "Encode",
   "base64_tool_decode": "Decode",
   "base64_tool_placeholder_input": "Input",
-  "base64_tool_placeholder_output": "Output"
+  "base64_tool_placeholder_output": "Output",
+  "base64_tool_copy": "Copy",
+  "base64_tool_swap": "Swap",
+  "base64_tool_copied_message": "Copied to clipboard!",
+  "base64_tool_invalid_input": "Invalid input for decoding.",
+  "base64_tool_input_label": "Input",
+  "base64_tool_output_label": "Output",
+  "common_auto": "Auto",
+  "common_manual": "Manual"
 }
