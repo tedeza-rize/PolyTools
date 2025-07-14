@@ -52,5 +52,19 @@
   "base64_tool_input_label": "Input",
   "base64_tool_output_label": "Output",
   "common_auto": "Auto",
-  "common_manual": "Manual"
+  "common_manual": "Manual",
+  "differ_tool_by_lines": "Compare by lines"
+,
+  "differ_tool_similarity": "Similarity",
+  "differ_tool_start_prompt": "Enter text in both fields to see the differences",
+  "differ_tool_title": "Text Differ",
+  "differ_tool_swap_tooltip": "Swap text fields",
+  "differ_tool_placeholder_left": "Enter original text here...",
+  "differ_tool_placeholder_right": "Enter modified text here...",
+  "differ_tool_result": "Result",
+  "differ_tool_engine_diff": "Diff",
+  "differ_tool_engine_fuzzball": "Similarity",
+  "differ_tool_by_words": "Compare by words",
+  "differ_tool_copy_tooltip": "Copy result to clipboard",
+  "differ_tool_copy": "Copy"
 }

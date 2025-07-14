@@ -3,7 +3,7 @@ import {
   Input, Button, Radio, Row, Col, Typography, Card, ConfigProvider, 
   Space, theme as antdTheme, Flex, Progress, Tooltip, Switch 
 } from 'antd';
-import { CopyOutlined, SyncOutlined, MoonOutlined, SunOutlined } from '@ant-design/icons';
+import { CopyOutlined, SyncOutlined } from '@ant-design/icons';
 import { diffLines, diffWords } from 'diff';
 import * as fuzzball from 'fuzzball';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -79,7 +79,7 @@ const MainContent = styled(Flex)`
 
 const StyledTextArea = styled(TextArea)`
   height: 100% !important;
-  min-height: 200px;
+  min-height: 300px; /* Increased min-height */
   resize: none;
   font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
   font-size: 14px;
@@ -160,17 +160,11 @@ const StyledButton = styled(Button)`
   }
 `;
 
-const ThemeToggle = styled(Switch)`
-  .ant-switch-handle {
-    &::before {
-      background: ${props => props.checked ? '#fbbf24' : '#60a5fa'} !important;
-    }
-  }
-`;
+
 
 const DifferTool: React.FC = () => {
   const { t } = useLanguage();
-  const { theme, toggleTheme } = useTheme();
+  const { theme } = useTheme();
   const { token } = antdTheme.useToken();
   const isDark = theme === 'dark';
 
@@ -232,30 +226,71 @@ const DifferTool: React.FC = () => {
     if (diffType === 'lines') {
       return (
         <div style={{ fontFamily: 'JetBrains Mono, monospace' }}>
-          {diffResult.map((part, index) => {
-            const lines = part.value.replace(/\n$/, '').split('\n');
-            return lines.map((line, lineIndex) => (
-              <Flex 
-                key={`${index}-${lineIndex}`} 
-                align="flex-start" 
-                className={`diff-line ${part.added ? 'diff-line-added' : ''} ${part.removed ? 'diff-line-removed' : ''}`}
-              >
-                <Text 
-                  type="secondary" 
-                  style={{ 
-                    width: 40, 
-                    textAlign: 'center', 
-                    userSelect: 'none',
-                    fontWeight: 'bold',
-                    color: part.added ? '#22c55e' : part.removed ? '#ef4444' : isDark ? '#64748b' : '#94a3b8'
-                  }}
-                >
-                  {part.added ? '+' : part.removed ? '-' : ' '}
-                </Text>
-                <div style={{ flex: 1, paddingLeft: '8px' }}>{line}</div>
-              </Flex>
-            ));
-          })}
+          {(() => {
+            let leftLineNumber = 0;
+            let rightLineNumber = 0;
+            return diffResult.map((part, index) => {
+              const lines = part.value.replace(/\n$/, '').split('\n');
+              return lines.map((line, lineIndex) => {
+                if (!part.added && !part.removed) {
+                  leftLineNumber++;
+                  rightLineNumber++;
+                } else if (part.added) {
+                  rightLineNumber++;
+                } else if (part.removed) {
+                  leftLineNumber++;
+                }
+
+                return (
+                  <Flex 
+                    key={`${index}-${lineIndex}`} 
+                    align="flex-start" 
+                    className={`diff-line ${part.added ? 'diff-line-added' : ''} ${part.removed ? 'diff-line-removed' : ''}`}
+                  >
+                    <Text 
+                      type="secondary" 
+                      style={{ 
+                        width: 80, 
+                        textAlign: 'right', 
+                        userSelect: 'none',
+                        fontWeight: 'bold',
+                        color: isDark ? '#64748b' : '#94a3b8',
+                        paddingRight: '8px'
+                      }}
+                    >
+                      {part.removed ? leftLineNumber : ''}
+                    </Text>
+                    <Text 
+                      type="secondary" 
+                      style={{ 
+                        width: 80, 
+                        textAlign: 'left', 
+                        userSelect: 'none',
+                        fontWeight: 'bold',
+                        color: isDark ? '#64748b' : '#94a3b8',
+                        paddingLeft: '8px'
+                      }}
+                    >
+                      {part.added ? rightLineNumber : ''}
+                    </Text>
+                    <Text 
+                      type="secondary" 
+                      style={{ 
+                        width: 20, 
+                        textAlign: 'center', 
+                        userSelect: 'none',
+                        fontWeight: 'bold',
+                        color: part.added ? '#22c55e' : part.removed ? '#ef4444' : isDark ? '#64748b' : '#94a3b8'
+                      }}
+                    >
+                      {part.added ? '+' : part.removed ? '-' : ' '}
+                    </Text>
+                    <div style={{ flex: 1, paddingLeft: '8px' }}>{line}</div>
+                  </Flex>
+                );
+              });
+            });
+          })()}
         </div>
       );
     } else {
@@ -308,14 +343,7 @@ const DifferTool: React.FC = () => {
             {t('differ_tool_title') || 'Text Differ'}
           </Title>
           <Space size="middle">
-            <Tooltip title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}>
-              <ThemeToggle
-                checked={isDark}
-                onChange={toggleTheme}
-                checkedChildren={<MoonOutlined />}
-                unCheckedChildren={<SunOutlined />}
-              />
-            </Tooltip>
+            
             <Tooltip title={t('differ_tool_swap_tooltip') || 'Swap text fields'}>
               <StyledButton 
                 shape="circle" 
@@ -331,7 +359,7 @@ const DifferTool: React.FC = () => {
 
         <MainContent vertical gap={24}>
           <Row gutter={24} style={{ flex: '0 0 auto' }}>
-            <Col span={12}>
+            <Col xs={24} md={12}>
               <TextAreaContainer theme={{ isDark }}>
                 <div className="textarea-label">Original Text</div>
                 <StyledTextArea 
@@ -342,7 +370,7 @@ const DifferTool: React.FC = () => {
                 />
               </TextAreaContainer>
             </Col>
-            <Col span={12}>
+            <Col xs={24} md={12}>
               <TextAreaContainer theme={{ isDark }}>
                 <div className="textarea-label">Modified Text</div>
                 <StyledTextArea 
