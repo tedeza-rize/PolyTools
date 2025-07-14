@@ -44,5 +44,13 @@
   "base64_tool_encode": "인코딩",
   "base64_tool_decode": "디코딩",
   "base64_tool_placeholder_input": "입력",
-  "base64_tool_placeholder_output": "출력"
+  "base64_tool_placeholder_output": "출력",
+  "base64_tool_copy": "복사",
+  "base64_tool_swap": "바꾸기",
+  "base64_tool_copied_message": "클립보드에 복사되었습니다!",
+  "base64_tool_invalid_input": "디코딩할 수 없는 입력입니다.",
+  "base64_tool_input_label": "입력",
+  "base64_tool_output_label": "출력",
+  "common_auto": "자동",
+  "common_manual": "수동"
 }
