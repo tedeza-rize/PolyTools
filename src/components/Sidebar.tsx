@@ -1,9 +1,16 @@
 import { useState, useMemo, useCallback, memo, useEffect } from 'react'
 import { Layout, Menu, Input, Button, Badge, Tooltip, Typography, Space } from 'antd'
-import { HomeOutlined, SettingOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, SwapOutlined, LockOutlined, FileTextOutlined, ThunderboltOutlined, EditOutlined, BgColorsOutlined, ToolOutlined } from '@ant-design/icons'
+import {
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  SearchOutlined,
+  ToolOutlined,
+} from '@ant-design/icons'
 
 import { useLanguage } from '../contexts/LanguageContext'
 import { useTheme } from '../contexts/ThemeContext'
+// 새 파일에서 메뉴 정의 import
+import { tools as TOOL_LIST, categories as CATEGORY_LIST } from './menuConfig'
 
 const { Sider } = Layout
 const { Text } = Typography
@@ -15,41 +22,18 @@ export const useMenu = () => {
   const { t } = useLanguage()
   const [searchTerm, setSearchTerm] = useState('')
 
+  // i18n 적용된 툴 리스트 생성 (memoized)
   const tools = useMemo(
-    () => [
-      { id: 'base64', name: t('tools_base64'), category: 'encoders', icon: '🔐' },
-      { id: 'url', name: t('tools_url'), category: 'encoders', icon: '🔗' },
-      { id: 'json', name: t('tools_json'), category: 'formatters', icon: '📄' },
-      { id: 'xml', name: t('tools_xml'), category: 'formatters', icon: '📋' },
-      { id: 'uuid', name: t('tools_uuid'), category: 'generators', icon: '⚡' },
-      { id: 'password', name: t('tools_password'), category: 'generators', icon: '🔑' },
-      { id: 'hash', name: t('tools_hash'), category: 'generators', icon: '#️⃣' },
-      { id: 'regex', name: t('tools_regex'), category: 'text', icon: '📝' },
-      { id: 'diff', name: t('tools_diff'), category: 'text', icon: '📊' },
-      { id: 'color', name: t('tools_color'), category: 'graphic', icon: '🎨' },
-      { id: 'image', name: t('tools_image'), category: 'graphic', icon: '🖼️' },
-      { id: 'hex', name: t('tools_hex'), category: 'converters', icon: '🔄' },
-      { id: 'timestamp', name: t('tools_timestamp'), category: 'converters', icon: '⏰' },
-    ],
+    () =>
+      TOOL_LIST.map((tl) => ({
+        ...tl,
+        name: t(tl.nameKey), // 실제 문자열로 변환
+      })),
     [t],
   )
 
   return { tools, searchTerm, setSearchTerm }
 }
-
-/* ------------------------------------------------------------------ */
-/*  카테고리 정의                                                       */
-/* ------------------------------------------------------------------ */
-const categories = [
-  { id: 'home', name: 'common_home', icon: <HomeOutlined />, color: '#1890ff' },
-  { id: 'converters', name: 'common_converters', icon: <SwapOutlined />, color: '#52c41a' },
-  { id: 'encoders', name: 'common_encoders', icon: <LockOutlined />, color: '#722ed1' },
-  { id: 'formatters', name: 'common_formatters', icon: <FileTextOutlined />, color: '#fa8c16' },
-  { id: 'generators', name: 'common_generators', icon: <ThunderboltOutlined />, color: '#fadb14' },
-  { id: 'text', name: 'common_text', icon: <EditOutlined />, color: '#eb2f96' },
-  { id: 'graphic', name: 'common_graphic', icon: <BgColorsOutlined />, color: '#f5222d' },
-  { id: 'settings', name: 'common_settings', icon: <SettingOutlined />, color: '#8c8c8c' },
-]
 
 /* ------------------------------------------------------------------ */
 /*  Sidebar 컴포넌트                                                    */
@@ -61,12 +45,7 @@ interface SidebarProps {
   onToggleCollapse: () => void
 }
 
-const Sidebar = ({
-  selectedTool,
-  onToolSelect,
-  collapsed,
-  onToggleCollapse,
-}: SidebarProps) => {
+const Sidebar = ({ selectedTool, onToolSelect, collapsed, onToggleCollapse }: SidebarProps) => {
   const { t } = useLanguage()
   const { colors, theme } = useTheme()
   const { tools, searchTerm, setSearchTerm } = useMenu()
@@ -89,8 +68,7 @@ const Sidebar = ({
       tools.filter(
         (tool) =>
           tool.category === cat &&
-          (searchTerm === '' ||
-            tool.name.toLowerCase().includes(searchTerm.toLowerCase())),
+          (searchTerm === '' || tool.name.toLowerCase().includes(searchTerm.toLowerCase())),
       ),
     [tools, searchTerm],
   )
@@ -100,9 +78,7 @@ const Sidebar = ({
   useEffect(() => {
     if (searchTerm) {
       // 검색어가 있을 때는 검색 결과가 있는 카테고리를 모두 펼침
-      const matched = categories
-        .filter((c) => getToolsByCategory(c.id).length > 0)
-        .map((c) => c.id)
+      const matched = CATEGORY_LIST.filter((c) => getToolsByCategory(c.id).length > 0).map((c) => c.id)
       setOpenKeys(matched)
     } else {
       // 검색어가 없으면 선택된 카테고리만 펼침
@@ -112,9 +88,8 @@ const Sidebar = ({
 
   /* ---------------- 메뉴 아이템 생성 (메모이즈) ---------------- */
   const menuItems = useMemo(
-  () =>
-    categories
-      .map((category) => {
+    () =>
+      CATEGORY_LIST.map((category) => {
         const items = getToolsByCategory(category.id)
         const isSimple = category.id === 'home' || category.id === 'settings'
         const isSelectedParent = selectedKeys.includes(category.id)
@@ -123,19 +98,17 @@ const Sidebar = ({
         if (!isSimple && items.length === 0 && searchTerm !== '') return null
 
         /* 부모·자식 공통 스타일 */
-        const parentStyle = isSelectedParent
-          ? { backgroundColor: colors.primary, borderRadius: 6 }
-          : undefined
+        const parentStyle = isSelectedParent ? { backgroundColor: colors.primary, borderRadius: 6 } : undefined
         const parentIconColor = isSelectedParent ? colors.text : category.color
 
         /* collapsed 상태일 때만 아이콘에 커스텀 Tooltip 부여 */
         const iconNode = collapsed ? (
           <Tooltip
-            title={t(category.name)}
+            title={t(category.nameKey)}
             placement="right"
             mouseEnterDelay={0.5}
             color={theme === 'light' ? '#fff' : colors.secondary}
-            overlayInnerStyle={{ color: colors.text }}
+            styles={{ body: { color: colors.text } }} // << CHANGED
           >
             <span style={{ color: parentIconColor }}>{category.icon}</span>
           </Tooltip>
@@ -146,56 +119,45 @@ const Sidebar = ({
         return {
           key: category.id,
           icon: iconNode,
-
           /* label 은 펼쳐진 상태에서만 보이므로 기존 그대로 두기 */
           label: (
             <Tooltip
-              title={collapsed ? '' : t(category.name)}
+              title={collapsed ? '' : t(category.nameKey)}
               placement="right"
               mouseEnterDelay={0.5}
               color={theme === 'light' ? '#fff' : colors.secondary}
+              styles={{ body: { color: colors.text } }} // << CHANGED
             >
               <Space>
-                <Text
-                  strong={isSelectedParent}
-                  style={{ color: colors.text }}
-                >
-                  {t(category.name)}
+                <Text strong={isSelectedParent} style={{ color: colors.text }}>
+                  {t(category.nameKey)}
                 </Text>
                 {!isSimple && !collapsed && items.length > 0 && (
-                  <Badge
-                    count={items.length}
-                    size="small"
-                    style={{ backgroundColor: category.color }}
-                  />
+                  <Badge count={items.length} size="small" style={{ backgroundColor: category.color }} />
                 )}
               </Space>
             </Tooltip>
           ),
-
-          title: '',       // 기본 AntD 툴팁 완전 비활성화
+          title: '', // 기본 AntD 툴팁 비활성화
           style: parentStyle,
-
           /* 자식(툴) 아이템 */
           children: isSimple
             ? undefined
             : items.map((tool) => ({
                 key: tool.id,
-                icon: (
-                  collapsed ? (
-                    /* collapsed 상태에선 자식들도 아이콘에 Tooltip */
-                    <Tooltip
-                      title={tool.name}
-                      placement="right"
-                      mouseEnterDelay={0.5}
-                      color={colors.secondary}
-                      overlayInnerStyle={{ color: colors.text }}
-                    >
-                      <span style={{ fontSize: 14 }}>{tool.icon}</span>
-                    </Tooltip>
-                  ) : (
+                icon: collapsed ? (
+                  /* collapsed 상태에선 자식들도 아이콘에 Tooltip */
+                  <Tooltip
+                    title={tool.name}
+                    placement="right"
+                    mouseEnterDelay={0.5}
+                    color={colors.secondary}
+                    styles={{ body: { color: colors.text } }} // << CHANGED
+                  >
                     <span style={{ fontSize: 14 }}>{tool.icon}</span>
-                  )
+                  </Tooltip>
+                ) : (
+                  <span style={{ fontSize: 14 }}>{tool.icon}</span>
                 ),
                 label: (
                   <Tooltip
@@ -203,32 +165,37 @@ const Sidebar = ({
                     placement="right"
                     mouseEnterDelay={0.5}
                     color={colors.secondary}
-                    overlayInnerStyle={{ color: colors.text }}
+                    styles={{ body: { color: colors.text } }} // << CHANGED
                   >
                     <Text style={{ color: colors.text }}>{tool.name}</Text>
                   </Tooltip>
                 ),
-                title: '',   // 기본 툴팁 비활성화
+                title: '', // 기본 툴팁 비활성화
                 onClick: () => onToolSelect(tool.id),
               })),
-
           onClick: isSimple ? () => onToolSelect(category.id) : undefined,
         }
-      })
-      .filter(Boolean) as any[],
-  [
-    collapsed,
-    colors.primary,
-    colors.text,
-    colors.secondary,
-    getToolsByCategory,
-    searchTerm,
-    selectedKeys,
-    t,
-    onToolSelect,
-    theme,
-  ],
-)
+      }).filter(Boolean) as any[],
+    [collapsed, colors.primary, colors.text, colors.secondary, getToolsByCategory, searchTerm, selectedKeys, t, onToolSelect, theme],
+  )
+
+  /* ------------------------------------------------------------------ */
+  /*  placeholder 컬러를 동적으로 세팅 (다크모드 가독성 개선)            */
+  /* ------------------------------------------------------------------ */
+  useEffect(() => {
+    const styleId = 'sidebar-placeholder-style'
+    let styleEl = document.getElementById(styleId) as HTMLStyleElement | null
+    if (!styleEl) {
+      styleEl = document.createElement('style')
+      styleEl.id = styleId
+      document.head.appendChild(styleEl)
+    }
+    styleEl.innerHTML = `
+      .sidebar-search-input::placeholder {
+        color: ${theme === 'dark' ? 'rgba(255,255,255,0.55)' : 'rgba(0,0,0,0.45)'};
+      }
+    `
+  }, [theme])
 
   return (
     <Sider
@@ -263,13 +230,7 @@ const Sidebar = ({
           }}
         >
           {!collapsed && (
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8,
-              }}
-            >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <div
                 style={{
                   width: 32,
@@ -293,12 +254,7 @@ const Sidebar = ({
             type="text"
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             onClick={onToggleCollapse}
-            style={{
-              fontSize: 16,
-              width: 40,
-              height: 40,
-              color: colors.text,
-            }}
+            style={{ fontSize: 16, width: 40, height: 40, color: colors.text }}
           />
         </div>
 
@@ -306,16 +262,13 @@ const Sidebar = ({
         {!collapsed && (
           <div style={{ padding: '16px', flexShrink: 0, borderBottom: `1px solid ${colors.secondary}` }}>
             <Input
+              className="sidebar-search-input"
               placeholder={t('home_search_placeholder')}
               prefix={<SearchOutlined style={{ color: colors.text }} />}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               allowClear
-              style={{
-                borderRadius: 6,
-                backgroundColor: colors.secondary,
-                color: colors.text,
-              }}
+              style={{ borderRadius: 6, backgroundColor: colors.secondary, color: colors.text }}
             />
           </div>
         )}
@@ -323,12 +276,7 @@ const Sidebar = ({
         {/* ---------- 메뉴 ---------- */}
         <div
           className="sidebar-menu-container"
-          style={{
-            flex: 1,
-            minHeight: 0,
-            overflowY: 'auto',
-            overflowX: 'hidden',
-          }}
+          style={{ flex: 1, minHeight: 0, overflowY: 'auto', overflowX: 'hidden' }}
         >
           <Menu
             mode="inline"
@@ -336,12 +284,7 @@ const Sidebar = ({
             selectedKeys={selectedKeys}
             openKeys={openKeys}
             onOpenChange={(keys) => setOpenKeys(keys as string[])}
-            style={{
-              border: 'none',
-              background: 'transparent',
-              color: colors.text,
-              padding: '16px 0',
-            }}
+            style={{ border: 'none', background: 'transparent', color: colors.text, padding: '16px 0' }}
             items={menuItems}
             inlineIndent={24}
           />
@@ -374,9 +317,7 @@ const Sidebar = ({
             >
               <ToolOutlined style={{ color: colors.text }} />
             </div>
-            <Text style={{ fontSize: 12, color: colors.text, opacity: 0.8 }}>
-              {t('common_app_name_short')}
-            </Text>
+            <Text style={{ fontSize: 12, color: colors.text, opacity: 0.8 }}>{t('common_app_name_short')}</Text>
           </div>
         )}
       </div>

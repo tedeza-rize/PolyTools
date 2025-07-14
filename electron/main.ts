@@ -36,7 +36,7 @@ function createWindow() {
   })
   
   // 상단 메뉴 숨기기
-  Menu.setApplicationMenu(null)
+  // Menu.setApplicationMenu(null)
 
   // Test active push message to Renderer-process.
   win.webContents.on('did-finish-load', () => {

@@ -12,6 +12,8 @@
   "dependencies": {
     "@ant-design/icons": "^6.0.0",
     "antd": "^5.26.4",
+    "diff": "^8.0.2",
+    "fuzzball": "^2.2.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.3",

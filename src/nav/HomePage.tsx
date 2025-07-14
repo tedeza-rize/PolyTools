@@ -13,7 +13,7 @@ const HomePage: React.FC = () => {
       .map(id => tools.find(tool => tool.id === id))
       .filter((tool): tool is Tool => Boolean(tool));
 
-  const getPopularTools = (): Tool[] => tools.filter(tool => tool.popular);
+  
 
   const displayTools = searchTerm ? filteredTools : tools;
 
@@ -46,14 +46,10 @@ const HomePage: React.FC = () => {
                 <div key={tool.id} className="tool-card" style={{ backgroundColor: colors.secondary, borderColor: colors.primary }}>
                   <div className="tool-icon" style={{ color: colors.primary }}>{tool.icon}</div>
                   <div className="tool-info">
-                    <h3 style={{ color: colors.text }}>{t(tool.name)}</h3>
+                    <h3 style={{ color: colors.text }}>{t(tool.nameKey)}</h3>
                     <p style={{ color: colors.text }}>{t(`tool_descriptions.${tool.id}`)}</p>
                   </div>
-                  {tool.popular && (
-                    <div className="tool-badge" style={{ backgroundColor: colors.primary, color: colors.text }}>
-                      {t('common.popular')}
-                    </div>
-                  )}
+                  
                 </div>
               ))}
             </div>
@@ -68,7 +64,7 @@ const HomePage: React.FC = () => {
                     <div key={tool.id} className="tool-card" style={{ backgroundColor: colors.secondary, borderColor: colors.primary }}>
                       <div className="tool-icon" style={{ color: colors.primary }}>{tool.icon}</div>
                       <div className="tool-info">
-                        <h3 style={{ color: colors.text }}>{t(tool.name)}</h3>
+                        <h3 style={{ color: colors.text }}>{t(tool.nameKey)}</h3>
                         <p style={{ color: colors.text }}>{t(`tool_descriptions.${tool.id}`)}</p>
                       </div>
                     </div>
@@ -77,23 +73,7 @@ const HomePage: React.FC = () => {
               </section>
             )}
 
-            <section className="tools-section">
-              <h2 style={{ color: colors.primary }}>{t('homepage.popular_tools')}</h2>
-              <div className="tools-grid">
-                {getPopularTools().map(tool => (
-                  <div key={tool.id} className="tool-card" style={{ backgroundColor: colors.secondary, borderColor: colors.primary }}>
-                    <div className="tool-icon" style={{ color: colors.primary }}>{tool.icon}</div>
-                    <div className="tool-info">
-                      <h3 style={{ color: colors.text }}>{t(tool.name)}</h3>
-                      <p style={{ color: colors.text }}>{t(`tool_descriptions.${tool.id}`)}</p>
-                    </div>
-                    <div className="tool-badge" style={{ backgroundColor: colors.primary, color: colors.text }}>
-                      {t('common.popular')}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
+            
 
             <section className="tools-section">
               <h2 style={{ color: colors.primary }}>{t('homepage.all_tools')}</h2>
@@ -102,14 +82,10 @@ const HomePage: React.FC = () => {
                   <div key={tool.id} className="tool-card" style={{ backgroundColor: colors.secondary, borderColor: colors.primary }}>
                     <div className="tool-icon" style={{ color: colors.primary }}>{tool.icon}</div>
                     <div className="tool-info">
-                      <h3 style={{ color: colors.text }}>{t(tool.name)}</h3>
+                      <h3 style={{ color: colors.text }}>{t(tool.nameKey)}</h3>
                       <p style={{ color: colors.text }}>{t(`tool_descriptions.${tool.id}`)}</p>
                     </div>
-                    {tool.popular && (
-                      <div className="tool-badge" style={{ backgroundColor: colors.primary, color: colors.text }}>
-                        {t('common.popular')}
-                      </div>
-                    )}
+                    
                   </div>
                 ))}
               </div>

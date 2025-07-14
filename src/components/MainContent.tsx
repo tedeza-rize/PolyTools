@@ -4,6 +4,7 @@ import HomePage from '../nav/HomePage'
 import SettingsPage from '../nav/SettingsPage'
 import Base64Tool from '../nav/Base64Tool'
 import JsonFormatter from '../nav/JsonFormatter'
+import DifferTool from '../nav/Differ'
 // import ComingSoon from '../nav/ComingSoon'
 
 interface MainContentProps {
@@ -38,6 +39,8 @@ const MainContent = ({ selectedTool, sidebarCollapsed }: MainContentProps) => {
         return <Base64Tool />
       case 'json':
         return <JsonFormatter />
+	  case 'diff':
+	    return <DifferTool />
       default:
         return <JsonFormatter />
     }
