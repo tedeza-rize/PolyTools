@@ -12,13 +12,16 @@
   "dependencies": {
     "@ant-design/icons": "^6.0.0",
     "antd": "^5.26.4",
+    "damerau-levenshtein": "^1.0.8",
     "diff": "^8.0.2",
     "fuzzball": "^2.2.2",
+    "longest-common-subsequence": "^1.0.4",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.3",
     "styled-components": "^6.1.19",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "wink-tokenizer": "^5.3.0"
   },
   "devDependencies": {
     "@types/react": "^19.1.8",

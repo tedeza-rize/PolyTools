@@ -53,8 +53,7 @@
   "base64_tool_output_label": "Output",
   "common_auto": "Auto",
   "common_manual": "Manual",
-  "differ_tool_by_lines": "Compare by lines"
-,
+  "differ_tool_by_lines": "By Lines",
   "differ_tool_similarity": "Similarity",
   "differ_tool_start_prompt": "Enter text in both fields to see the differences",
   "differ_tool_title": "Text Differ",
@@ -63,8 +62,18 @@
   "differ_tool_placeholder_right": "Enter modified text here...",
   "differ_tool_result": "Result",
   "differ_tool_engine_diff": "Diff",
-  "differ_tool_engine_fuzzball": "Similarity",
-  "differ_tool_by_words": "Compare by words",
+  "differ_tool_engine_fuzzball": "Levenshtein",
+  "differ_tool_by_words": "By Words",
   "differ_tool_copy_tooltip": "Copy result to clipboard",
-  "differ_tool_copy": "Copy"
+  "differ_tool_copy": "Copy",
+  "differ_tool_engine_similarity": "Similarity",
+  "differ_tool_group_edit_distance": "String (Edit Distance) Based",
+  "differ_tool_group_statistical": "Set/Vector (Statistic) Based",
+  "differ_tool_engine_damerau": "Damerau-Levenshtein",
+  "differ_tool_engine_lcs": "LCS",
+  "differ_tool_engine_bm25": "BM25",
+  "differ_tool_engine_cosine": "Cosine Similarity",
+  "differ_tool_compare": "Calculate",
+  "differ_tool_engine_all": "Compare All",
+  "differ_tool_similarity_prompt": "Press the Calculate button to see the similarity."
 }

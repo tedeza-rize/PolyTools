@@ -53,8 +53,7 @@
   "base64_tool_output_label": "출력",
   "common_auto": "자동",
   "common_manual": "수동",
-  "differ_tool_by_lines": "줄 단위 비교"
-,
+  "differ_tool_by_lines": "줄 단위",
   "differ_tool_similarity": "유사도",
   "differ_tool_start_prompt": "차이점을 확인하려면 양쪽에 텍스트를 입력하세요",
   "differ_tool_title": "텍스트 비교",
@@ -62,9 +61,19 @@
   "differ_tool_placeholder_left": "원본 텍스트를 여기에 입력하세요...",
   "differ_tool_placeholder_right": "수정된 텍스트를 여기에 입력하세요...",
   "differ_tool_result": "결과",
-  "differ_tool_engine_diff": "차이",
-  "differ_tool_engine_fuzzball": "유사도",
-  "differ_tool_by_words": "단어 단위 비교",
+  "differ_tool_engine_diff": "차이점",
+  "differ_tool_engine_fuzzball": "Levenshtein",
+  "differ_tool_by_words": "단어 단위",
   "differ_tool_copy_tooltip": "결과를 클립보드에 복사",
-  "differ_tool_copy": "복사"
+  "differ_tool_copy": "복사",
+  "differ_tool_engine_similarity": "유사도",
+  "differ_tool_group_edit_distance": "문자열(편집 거리) 기반",
+  "differ_tool_group_statistical": "집합/벡터(통계) 기반",
+  "differ_tool_engine_damerau": "Damerau-Levenshtein",
+  "differ_tool_engine_lcs": "LCS",
+  "differ_tool_engine_bm25": "BM25",
+  "differ_tool_engine_cosine": "코사인 유사도",
+  "differ_tool_compare": "계산",
+  "differ_tool_engine_all": "한번에 비교",
+  "differ_tool_similarity_prompt": "계산 버튼을 눌러 유사도를 확인하세요."
 }
