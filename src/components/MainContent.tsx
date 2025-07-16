@@ -12,9 +12,10 @@ import RegexTester from '../nav/RegexTester'
 interface MainContentProps {
   selectedTool: string
   sidebarCollapsed: boolean
+  onToolSelect: (toolId: string) => void
 }
 
-const MainContent = ({ selectedTool, sidebarCollapsed }: MainContentProps) => {
+const MainContent = ({ selectedTool, sidebarCollapsed, onToolSelect }: MainContentProps) => {
   const { addToRecent } = useMenu()
   const prevSelectedTool = useRef<string>('')
 
@@ -34,7 +35,7 @@ const MainContent = ({ selectedTool, sidebarCollapsed }: MainContentProps) => {
   const renderContent = () => {
     switch (selectedTool) {
       case 'home':
-        return <HomePage />
+        return <HomePage onToolSelect={onToolSelect} />
       case 'settings':
         return <SettingsPage />
       case 'base64':

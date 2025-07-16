@@ -23,6 +23,7 @@ function App() {
             />
             <MainContent 
               selectedTool={selectedTool}
+              onToolSelect={setSelectedTool} // 페이지 이동 함수 전달
               sidebarCollapsed={sidebarCollapsed}
             />
           </div>
