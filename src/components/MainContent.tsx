@@ -6,6 +6,7 @@ import Base64Tool from '../nav/Base64Tool'
 import UrlTool from '../nav/UrlTool' // 방금 만든 컴포넌트
 import Differ from '../nav/Differ'
 import JsonFormatter from '../nav/JsonFormatter'
+import RegexTester from '../nav/RegexTester'
 // import ComingSoon from '../nav/ComingSoon'
 
 interface MainContentProps {
@@ -40,6 +41,8 @@ const MainContent = ({ selectedTool, sidebarCollapsed }: MainContentProps) => {
         return <Base64Tool />
       case 'url':
         return <UrlTool />
+      case 'regex':
+        return <RegexTester />
       case 'json':
         return <JsonFormatter />
 	  case 'diff':

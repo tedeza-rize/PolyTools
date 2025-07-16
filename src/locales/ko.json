@@ -82,5 +82,10 @@
   "tools_minifier": "경량화",
   "tools_validator": "유효성 검사기",
   "url_tool_title": "URL 인코더 / 디코더",
-  "url_tool_invalid_input": "디코딩할 수 없는 입력입니다."
+  "url_tool_invalid_input": "디코딩할 수 없는 입력입니다.",
+  "regex_tester_placeholder_pattern": "정규식을 입력하세요...",
+  "regex_tester_placeholder_test_string": "테스트할 문자열을 입력하세요...",
+  "regex_tester_test_string_label": "테스트 문자열",
+  "regex_tester_matches_label": "매치 결과",
+  "tools_regex_tester": "정규식 테스터"
 }

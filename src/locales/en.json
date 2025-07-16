@@ -82,5 +82,10 @@
   "tools_minifier": "Minifier",
   "tools_validator": "Validator",
   "url_tool_title": "URL Encoder / Decoder",
-  "url_tool_invalid_input": "Invalid input for decoding."
+  "url_tool_invalid_input": "Invalid input for decoding.",
+  "regex_tester_placeholder_pattern": "Enter Regular Expression here...",
+  "regex_tester_placeholder_test_string": "Enter Test String here...",
+  "regex_tester_test_string_label": "Test String",
+  "regex_tester_matches_label": "Matches",
+  "tools_regex_tester": "Regex Tester"
 }

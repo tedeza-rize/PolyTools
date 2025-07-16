@@ -82,5 +82,10 @@
   "tools_minifier": "ミニファイア",
   "tools_validator": "バリデーター",
   "url_tool_title": "URLエンコーダー/デコーダー",
-  "url_tool_invalid_input": "デコード用の無効な入力。"
+  "url_tool_invalid_input": "デコード用の無効な入力。",
+  "regex_tester_placeholder_pattern": "正規表現をここに入力してください...",
+  "regex_tester_placeholder_test_string": "テスト文字列をここに入력してください...",
+  "regex_tester_test_string_label": "テスト文字列",
+  "regex_tester_matches_label": "一致",
+  "tools_regex_tester": "正規表現テスター"
 }
