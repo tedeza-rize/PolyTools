@@ -16,7 +16,9 @@ electron.contextBridge.exposeInMainWorld("ipcRenderer", {
   invoke(...args) {
     const [channel, ...omit] = args;
     return electron.ipcRenderer.invoke(channel, ...omit);
-  }
+  },
+  getSystemInfo: () => electron.ipcRenderer.invoke("get-system-info"),
+  getNtpTime: (server) => electron.ipcRenderer.invoke("get-ntp-time", server)
   // You can expose other APTs you need here.
   // ...
 });

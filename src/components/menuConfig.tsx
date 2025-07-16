@@ -1,4 +1,4 @@
-import { HomeOutlined, SwapOutlined, LockOutlined, FileTextOutlined, ThunderboltOutlined, EditOutlined, BgColorsOutlined, SettingOutlined, LinkOutlined, KeyOutlined, NumberOutlined, CodeOutlined, CheckCircleOutlined, BranchesOutlined, PictureOutlined, BgColorsOutlined as PaletteOutlined, ClockCircleOutlined, BarsOutlined, BarcodeOutlined } from '@ant-design/icons'
+import { HomeOutlined, SwapOutlined, LockOutlined, FileTextOutlined, ThunderboltOutlined, EditOutlined, BgColorsOutlined, SettingOutlined, LinkOutlined, KeyOutlined, NumberOutlined, CodeOutlined, CheckCircleOutlined, BranchesOutlined, PictureOutlined, BgColorsOutlined as PaletteOutlined, ClockCircleOutlined, BarsOutlined, BarcodeOutlined, DesktopOutlined, FieldTimeOutlined } from '@ant-design/icons'
 
 export interface Tool {
   id: string
@@ -40,6 +40,10 @@ export const tools: Tool[] = [
   // ────────── Converters ────────── //
   { id: 'hex', nameKey: 'tools_hex', category: 'converters', icon: <BarcodeOutlined /> },
   { id: 'timestamp', nameKey: 'tools_timestamp', category: 'converters', icon: <ClockCircleOutlined /> },
+
+  // ────────── System ────────── //
+  { id: 'pc-specs', nameKey: 'tools_pc_specs', category: 'system', icon: <DesktopOutlined /> },
+  { id: 'time', nameKey: 'tools_time', category: 'system', icon: <FieldTimeOutlined /> },
 ]
 
 export const categories: Category[] = [
@@ -50,5 +54,6 @@ export const categories: Category[] = [
   { id: 'generators', nameKey: 'common_generators', icon: <ThunderboltOutlined />, color: '#fadb14' },
   { id: 'text', nameKey: 'common_text', icon: <EditOutlined />, color: '#eb2f96' },
   { id: 'graphic', nameKey: 'common_graphic', icon: <BgColorsOutlined />, color: '#f5222d' },
+  { id: 'system', nameKey: 'common_system', icon: <DesktopOutlined />, color: '#13c2c2' },
   { id: 'settings', nameKey: 'common_settings', icon: <SettingOutlined />, color: '#8c8c8c' },
 ]

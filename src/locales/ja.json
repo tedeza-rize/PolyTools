@@ -37,6 +37,8 @@
   "tools_image": "画像オプティマイザー",
   "tools_hex": "HexからRGBへのコンバーター",
   "tools_timestamp": "タイムスタンプコンバーター",
+  "tools_pc_specs": "PC仕様",
+  "tools_time": "時間",
   "json_formatter_title": "JSONフォーマッター",
   "json_formatter_placeholder_input": "ここにJSONを入力してください",
   "json_formatter_button_format": "JSONをフォーマット",

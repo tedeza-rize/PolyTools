@@ -1,8 +1,10 @@
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron'
 import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import { Menu } from 'electron'
+import si from 'systeminformation';
+import ntpClient from 'ntp-client';
 
 const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -69,4 +71,31 @@ app.on('activate', () => {
   }
 })
 
-app.whenReady().then(createWindow)
+app.whenReady().then(() => {
+  ipcMain.handle('get-ntp-time', (event, server) => {
+    return new Promise((resolve, reject) => {
+      ntpClient.getNetworkTime(server, 123, (err, date) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(date);
+        }
+      });
+    });
+  });
+
+  ipcMain.handle('get-system-info', async () => {
+    try {
+      const cpu = await si.cpu();
+      const mem = await si.mem();
+      const graphics = await si.graphics();
+      const os = await si.osInfo();
+      const disk = await si.diskLayout();
+      return { cpu, mem, graphics, os, disk };
+    } catch (error) {
+      console.error('Failed to get system info:', error);
+      return null;
+    }
+  });
+  createWindow();
+})

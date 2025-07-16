@@ -7,6 +7,8 @@ import UrlTool from '../nav/UrlTool' // 방금 만든 컴포넌트
 import Differ from '../nav/Differ'
 import JsonFormatter from '../nav/JsonFormatter'
 import RegexTester from '../nav/RegexTester'
+import PcSpecs from '../nav/PcSpecs'
+import TimeTool from '../nav/TimeTool'
 // import ComingSoon from '../nav/ComingSoon'
 
 interface MainContentProps {
@@ -48,6 +50,10 @@ const MainContent = ({ selectedTool, sidebarCollapsed, onToolSelect }: MainConte
         return <JsonFormatter />
 	  case 'diff':
 	    return <Differ />
+      case 'pc-specs':
+        return <PcSpecs />
+      case 'time':
+        return <TimeTool />
       default:
         return <JsonFormatter />
     }

@@ -37,6 +37,8 @@
   "tools_image": "Image Optimizer",
   "tools_hex": "Hex to RGB Converter",
   "tools_timestamp": "Timestamp Converter",
+  "tools_pc_specs": "PC Specs",
+  "tools_time": "Time",
   "json_formatter_title": "JSON Formatter",
   "json_formatter_placeholder_input": "Enter JSON here",
   "json_formatter_button_format": "Format JSON",
