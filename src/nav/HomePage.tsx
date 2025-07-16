@@ -31,8 +31,7 @@ const HomePage: React.FC<HomePageProps> = ({ onToolSelect }) => {
       <Card
         hoverable
         onClick={() => handleToolClick(tool.id)}
-        style={{ backgroundColor: colors.secondary, border: `1px solid ${colors.border}` }}
-        bodyStyle={{ padding: '16px' }}
+        style={{ backgroundColor: colors.secondary, border: `1px solid ${colors.border}`, body: { padding: '16px' } }}
       >
         <Space align="center">
           <span style={{ fontSize: '22px', color: colors.primary, marginTop: '4px' }}>{tool.icon}</span>
@@ -48,8 +47,7 @@ const HomePage: React.FC<HomePageProps> = ({ onToolSelect }) => {
   const renderSearchResults = () => (
     <Card
       title={<Typography.Title level={4} style={{ color: colors.text }}>{t('homepage.search_results')}</Typography.Title>}
-      style={{ marginBottom: 24, backgroundColor: 'transparent', border: 'none' }}
-      headStyle={{ borderBottom: `1px solid ${colors.border}`}}
+      style={{ marginBottom: 24, backgroundColor: 'transparent', border: 'none', header: { borderBottom: `1px solid ${colors.border}` } }}
     >
       {filteredTools.length > 0 ? (
         <Row gutter={[16, 16]}>{filteredTools.map(renderToolCard)}</Row>
@@ -66,8 +64,7 @@ const HomePage: React.FC<HomePageProps> = ({ onToolSelect }) => {
       {recentToolDetails.length > 0 && (
         <Card
           title={<Typography.Title level={4} style={{ color: colors.text }}>{t('homepage.recent')}</Typography.Title>}
-          style={{ marginBottom: 32, backgroundColor: 'transparent', border: 'none' }}
-          headStyle={{ borderBottom: `1px solid ${colors.border}`}}
+          style={{ marginBottom: 32, backgroundColor: 'transparent', border: 'none', header: { borderBottom: `1px solid ${colors.border}` } }}
         >
           <Row gutter={[16, 16]}>{recentToolDetails.map(renderToolCard)}</Row>
         </Card>
@@ -94,8 +91,7 @@ const HomePage: React.FC<HomePageProps> = ({ onToolSelect }) => {
                   </Tag>
                 </Space>
               }
-              style={{ marginBottom: 32, backgroundColor: 'transparent', border: 'none' }}
-              headStyle={{ borderBottom: `1px solid ${colors.border}`}}
+              style={{ marginBottom: 32, backgroundColor: 'transparent', border: 'none', header: { borderBottom: `1px solid ${colors.border}` } }}
             >
               <Row gutter={[16, 16]}>{categoryTools.map(renderToolCard)}</Row>
             </Card>
@@ -105,7 +101,7 @@ const HomePage: React.FC<HomePageProps> = ({ onToolSelect }) => {
   );
 
   return (
-    <div style={{ padding: '24px 32px', height: '100%', overflowY: 'auto' }}>
+    <div style={{ padding: '24px 32px', height: '100%' }}>
       <div style={{ marginBottom: 32 }}>
         <Typography.Title level={2} style={{ color: colors.text }}>
           {t('common_app_name')}
