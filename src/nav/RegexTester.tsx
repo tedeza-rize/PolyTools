@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Input, Row, Col, Typography, Card, ConfigProvider, theme as antdTheme, Checkbox } from 'antd';
+import { Input, Row, Col, Typography, Checkbox, ConfigProvider, theme as antdTheme } from 'antd';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
-import styled, { createGlobalStyle } from 'styled-components';
+import { GlobalStyle, ToolContainer, StyledCard } from '../components/common/ToolStyles';
+import styled from 'styled-components';
 import debounce from 'lodash.debounce';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-regex';
@@ -11,52 +12,6 @@ import 'prismjs/themes/prism.css';
 const { TextArea } = Input;
 const { Title, Text } = Typography;
 const CheckboxGroup = Checkbox.Group;
-
-const GlobalStyle = createGlobalStyle`
-  body.dark {
-    --bg-color: #1a1a1a;
-    --text-color: #e0e0e0;
-    --card-bg-color: #2a2a2a;
-    --border-color: #424242;
-    --highlight-bg-color: #4a4a2a;
-    --highlight-text-color: #ffff00;
-  }
-  body.light {
-    --bg-color: #f5f5f5;
-    --text-color: #212121;
-    --card-bg-color: #ffffff;
-    --border-color: #e0e0e0;
-    --highlight-bg-color: #fffb8f;
-    --highlight-text-color: #000000;
-  }
-`;
-
-const ToolContainer = styled.div`
-  padding: 24px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  background-color: var(--bg-color);
-  color: var(--text-color);
-  box-sizing: border-box;
-`;
-
-const StyledCard = styled(Card)`
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  background-color: var(--card-bg-color) !important;
-  border: 1px solid var(--border-color);
-  .ant-card-head {
-    color: var(--text-color);
-    border-bottom: 1px solid var(--border-color);
-  }
-  .ant-card-body {
-    flex-grow: 1;
-    overflow-y: auto;
-    padding: 12px;
-  }
-`;
 
 const HighlightedText = styled.div`
   white-space: pre-wrap;
