@@ -3,8 +3,9 @@ import { useMenu } from '../contexts/MenuContext'
 import HomePage from '../nav/HomePage'
 import SettingsPage from '../nav/SettingsPage'
 import Base64Tool from '../nav/Base64Tool'
+import UrlTool from '../nav/UrlTool' // 방금 만든 컴포넌트
+import Differ from '../nav/Differ'
 import JsonFormatter from '../nav/JsonFormatter'
-import DifferTool from '../nav/Differ'
 // import ComingSoon from '../nav/ComingSoon'
 
 interface MainContentProps {
@@ -37,10 +38,12 @@ const MainContent = ({ selectedTool, sidebarCollapsed }: MainContentProps) => {
         return <SettingsPage />
       case 'base64':
         return <Base64Tool />
+      case 'url':
+        return <UrlTool />
       case 'json':
         return <JsonFormatter />
 	  case 'diff':
-	    return <DifferTool />
+	    return <Differ />
       default:
         return <JsonFormatter />
     }

@@ -80,5 +80,7 @@
   "code_optimizer": "Code Optimizer",
   "tools_formatter": "Formatter",
   "tools_minifier": "Minifier",
-  "tools_validator": "Validator"
+  "tools_validator": "Validator",
+  "url_tool_title": "URL Encoder / Decoder",
+  "url_tool_invalid_input": "Invalid input for decoding."
 }

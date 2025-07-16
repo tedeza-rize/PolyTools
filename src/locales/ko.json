@@ -80,5 +80,7 @@
   "code_optimizer": "코드 최적화",
   "tools_formatter": "포맷터",
   "tools_minifier": "경량화",
-  "tools_validator": "유효성 검사기"
+  "tools_validator": "유효성 검사기",
+  "url_tool_title": "URL 인코더 / 디코더",
+  "url_tool_invalid_input": "디코딩할 수 없는 입력입니다."
 }

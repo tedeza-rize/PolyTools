@@ -80,5 +80,7 @@
   "code_optimizer": "コードオプティマイザー",
   "tools_formatter": "フォーマッター",
   "tools_minifier": "ミニファイア",
-  "tools_validator": "バリデーター"
+  "tools_validator": "バリデーター",
+  "url_tool_title": "URLエンコーダー/デコーダー",
+  "url_tool_invalid_input": "デコード用の無効な入力。"
 }
