@@ -20,9 +20,9 @@ export const tools: Tool[] = [
   { id: 'url', nameKey: 'tools_url', category: 'encoders', icon: <LinkOutlined /> },
 
   // ────────── Formatting Tools ────────── //
-  { id: 'formatter', nameKey: 'tools_json_formatter', category: 'code_optimizer', icon: <CodeOutlined /> },
-  { id: 'minifier', nameKey: 'tools_json_minifier', category: 'code_optimizer', icon: <BarsOutlined /> },
-  { id: 'validator', nameKey: 'tools_json_validator', category: 'code_optimizer', icon: <CheckCircleOutlined /> },
+  { id: 'formatter', nameKey: 'tools_formatter', category: 'code_optimizer', icon: <CodeOutlined /> },
+  { id: 'minifier', nameKey: 'tools_minifier', category: 'code_optimizer', icon: <BarsOutlined /> },
+  { id: 'validator', nameKey: 'tools_validator', category: 'code_optimizer', icon: <CheckCircleOutlined /> },
 
   // ────────── Generators ────────── //
   { id: 'uuid', nameKey: 'tools_uuid', category: 'generators', icon: <ThunderboltOutlined /> },

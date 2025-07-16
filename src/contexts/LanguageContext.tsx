@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 
-type Language = 'ko' | 'en'
+type Language = 'ko' | 'en' | 'ja'
 type Translations = { [key: string]: string | Translations }
 
 interface LanguageContextType {

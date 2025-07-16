@@ -17,7 +17,8 @@
   "settings_language": "Language",
   "settings_korean": "Korean",
   "settings_english": "English",
-  "settings_theme": "Theme",
+    "settings_japanese": "Japanese",
+    "settings_theme": "Theme",
   "settings_light": "Light",
   "settings_dark": "Dark",
   "settings_info_section_title": "About",
@@ -75,5 +76,9 @@
   "differ_tool_engine_cosine": "Cosine Similarity",
   "differ_tool_compare": "Calculate",
   "differ_tool_engine_all": "Compare All",
-  "differ_tool_similarity_prompt": "Press the Calculate button to see the similarity."
+  "differ_tool_similarity_prompt": "Press the Calculate button to see the similarity.",
+  "code_optimizer": "Code Optimizer",
+  "tools_formatter": "Formatter",
+  "tools_minifier": "Minifier",
+  "tools_validator": "Validator"
 }

@@ -17,7 +17,8 @@
   "settings_language": "언어",
   "settings_korean": "한국어",
   "settings_english": "영어",
-  "settings_theme": "테마",
+    "settings_japanese": "일본어",
+    "settings_theme": "테마",
   "settings_light": "라이트",
   "settings_dark": "다크",
   "settings_info_section_title": "정보",
@@ -75,5 +76,9 @@
   "differ_tool_engine_cosine": "코사인 유사도",
   "differ_tool_compare": "계산",
   "differ_tool_engine_all": "한번에 비교",
-  "differ_tool_similarity_prompt": "계산 버튼을 눌러 유사도를 확인하세요."
+  "differ_tool_similarity_prompt": "계산 버튼을 눌러 유사도를 확인하세요.",
+  "code_optimizer": "코드 최적화",
+  "tools_formatter": "포맷터",
+  "tools_minifier": "경량화",
+  "tools_validator": "유효성 검사기"
 }
