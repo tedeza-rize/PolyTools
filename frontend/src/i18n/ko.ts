@@ -30,6 +30,7 @@ export const ko: Record<string, string> = {
   "module.on": "켜짐",
   "module.off": "꺼짐",
   "module.settings": "설정",
+  "hotkey.press": "단축키를 누르세요…",
 
   "caption.minimize": "최소화",
   "caption.maximize": "최대화",

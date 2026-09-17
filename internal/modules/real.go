@@ -47,6 +47,35 @@ func newAwake() *core.BaseModule {
 	})
 }
 
+// hotkeyCtl tracks the combo a module has registered so it can be
+// re-registered cleanly when the user edits the shortcut (the store only
+// knows the new value, so the previous combo must be kept here).
+type hotkeyCtl struct {
+	app     *application.App
+	comboOf func() string // current combo, read from the module's settings
+	onFire  func()
+	last    string // combo actually registered
+}
+
+func newHotkeyCtl(app *application.App, comboOf func() string, onFire func()) *hotkeyCtl {
+	return &hotkeyCtl{app: app, comboOf: comboOf, onFire: onFire}
+}
+
+func (h *hotkeyCtl) register() error {
+	h.last = h.comboOf()
+	return h.app.GlobalShortcut.Register(h.last, h.onFire)
+}
+
+func (h *hotkeyCtl) unregister() error {
+	return h.app.GlobalShortcut.Unregister(h.last)
+}
+
+// rebind swaps the previously registered combo for the current one.
+func (h *hotkeyCtl) rebind() error {
+	_ = h.app.GlobalShortcut.Unregister(h.last)
+	return h.register()
+}
+
 // --- Always On Top: Win+Ctrl+T pins the foreground window ---
 
 func newAlwaysOnTop(app *application.App) *core.BaseModule {
@@ -84,28 +113,19 @@ func newAlwaysOnTop(app *application.App) *core.BaseModule {
 		},
 	})
 
-	register := func() error {
-		return app.GlobalShortcut.Register(m.SettingString("hotkey"), func() {
-			hwnd := win32.ForegroundWindow()
-			log.Printf("[always-on-top] hotkey fired, hwnd=%d topmost=%v", hwnd, win32.IsTopMost(hwnd))
-			if hwnd != 0 {
-				win32.SetTopMost(hwnd, !win32.IsTopMost(hwnd))
-			}
-		})
-	}
-
-	return m.WithHandlers(
-		register,
-		func() error {
-			return app.GlobalShortcut.Unregister(m.SettingString("hotkey"))
-		},
-	).WithSettingHandler(func(key string, value any) error {
-		if key != "hotkey" || !m.Info().Enabled {
-			return nil
+	hk := newHotkeyCtl(app, func() string { return m.SettingString("hotkey") }, func() {
+		hwnd := win32.ForegroundWindow()
+		log.Printf("[always-on-top] hotkey fired, hwnd=%d topmost=%v", hwnd, win32.IsTopMost(hwnd))
+		if hwnd != 0 {
+			win32.SetTopMost(hwnd, !win32.IsTopMost(hwnd))
 		}
-		old := value // value already applied; re-register with the new combo
-		_ = old
-		_ = app.GlobalShortcut.UnregisterAll()
-		return register()
 	})
+
+	return m.WithHandlers(hk.register, hk.unregister).
+		WithSettingHandler(func(key string, value any) error {
+			if key != "hotkey" || !m.Info().Enabled {
+				return nil
+			}
+			return hk.rebind()
+		})
 }
