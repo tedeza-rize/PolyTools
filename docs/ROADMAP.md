@@ -91,7 +91,7 @@
 ### 2. 프레임 출력 (FPS 오버레이) — 가능, 우회 경로 (중~상)
 - 진짜 인게임 오버레이(Render API 후킹+DLL 인젝션)는 Go로 사실상 불가 — C++ DLL 필요, 안티치트 충돌
 - **대안(권장): ETW `Microsoft-Windows-DXGI`/D3D9 Present 이벤트 소비** — PresentMon(MS 오픈소스)이 쓰는 방식. 인젝션 없이 프로세스별 Present 타임스탬프 수집 → FPS/frametime 계산. Go ETW 라이브러리(`bi-zone/etw` 등)로 소비 가능, 안티치트 안전
-- 표시: 화면 위 topmost 투명 오버레이 창에 숫자/그래프 (오버레이 헬퍼 재사용)
+- 표시: 화면 위 topmost 투명 오버레이 창 — **스타일 설정 가능: 숫자만 / 그래프만 / 숫자+그래프** (카탈로그에 반영됨), 위치 4방향, 프레임타임 토글
 - 리스크: Present 이벤트→FPS 해석 로직(PresentMon 참조 필요), 일부 프레젠트 경로 커버리지 차이
 
 ### 3. Lossless Scaling — 부분 가능 (상)
@@ -100,11 +100,10 @@
 - 리스크: 캡처→표시 지연시간(인풋랙 체감), 프레임레이트
 - 판정: 1단계 정수 스케일링으로 시작, 반응 보고 확장
 
-### 4. 노트북 배터리 충전 제한 — 범용 불가 → 재정의 권장
-- 충전 임계값은 EC(임베디드 컨트롤러)/벤더 드라이버 영역 — **범용 Windows API 없음**. 삼성/ASUS/Lenovo 등 벤더 전용 서비스·WMI 경유라 벤더별 구현만 가능
-- 삼성 노트북이면 Samsung Settings 인터페이스 조사 가치 있으나 일반화 어려움
-- **대안(쉬움, 실용): 충전 알림 모듈** — `GetSystemPowerStatus` 폴링으로 목표%(예: 80) 도달 시 알림+사운드 → 물리적으로 어댑터 뽑게 유도. 벤더 무관하게 동작
-- 판정: 충전 제한 자체는 보류, 알림 모듈로 대체 제안
+### 4. 배터리 관리자 (충전 제한 + 알림) — 사용자 구현 진행 중
+- **판정 변경: 가능** — 사용자가 Go로 충전 제한을 직접 구현 중 (리눅스 커널 구조 등 활용). 그 구현을 이 모듈에 연결한다
+- 설정 스키마(카탈로그 반영됨): `chargeLimitEnabled` + `chargeLimit` 슬라이더(50–100), `notifyEnabled` + `notifyAt` 알림
+- 알림 부분은 독립적으로 구현 가능: `GetSystemPowerStatus` 폴링 → 임계치 도달 시 알림/사운드
 
 ### 5. 트리거 시스템 (블록 자동화) — 가능 (상이나 핵심 난제는 해결됨)
 - **에디터: Google Blockly 임베드** (Scratch/Entry의 실제 엔진, MIT) → 블록을 JSON으로 직렬화 → Go 인터프리터가 트리거별로 실행
@@ -119,10 +118,10 @@
 - 5번 트리거 시스템의 트리거 종류로 자연 흡수 가능 — 단독으로 먼저 만들어도 되고
 - 조합키 매크로(SendInput 시퀀스)까지 하면 중간
 
-### 7. Win11 우클릭 메뉴 항목 추가 — 부분 가능
-- **쉬운 버전**: 레거시 verb 등록(`HKCU\Software\Classes\*\shell`, `Directory\shell`, `Directory\Background\shell` 등) → Win11에선 "추가 옵션 표시" 클래식 메뉴에 나타남. 순수 레지스트리 편집 — 항목명/아이콘/명령 지정 가능
-- **최상위 모던 메뉴**: sparse MSIX 패키지 + `IExplorerCommand` COM in-proc DLL 필요 → Go 단독 불가, C++ shim + 패키징. 대형, 후순위
-- 판정: 클래식 메뉴 경로로 먼저 제공(여전히 유용 — "여기서 터미널", "PolyTools로 보내기" 등), 모던 메뉴는 별도 컴포넌트 필요 시 검토
+### 7. Win11 우클릭 메뉴 항목 추가 — 부분 가능, 둘 다 지원 (사용자 결정)
+- 설정 스키마(카탈로그 반영됨): `classicMenu` / `modernMenu` 토글 — 사용자가 각각 체크
+- **클래식 메뉴**: 레거시 verb 등록(`HKCU\Software\Classes\*\shell`, `Directory\shell`, `Directory\Background\shell` 등) → "추가 옵션 표시" 메뉴. 순수 레지스트리 편집 — 쉬움
+- **모던 메뉴(최상위)**: sparse MSIX 패키지 + `IExplorerCommand` COM in-proc DLL 필요 → 별도 C++ shim + 패키징. 대형 작업이지만 지원 목표
 
 ### 8. 커스텀 화면보호기 (영상/웹) — 가능 (중), 재미있는 차별화
 - `.scr` = `/s`(실행) `/c`(설정) `/p`(미리보기) 인자를 처리하는 exe → System32 배치 시 Windows 화면보호기 목록에 등록(관리자 필요)
