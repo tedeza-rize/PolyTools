@@ -31,7 +31,7 @@ export function Dashboard({
             onClick={() => onOpen(m.key)}
           >
             <div className="module-card-head">
-              <span className="module-card-icon">
+              <span className="icon-tile">
                 <ModuleIcon name={m.icon} />
               </span>
               <div style={{ flex: 1, minWidth: 0 }}>

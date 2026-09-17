@@ -36,7 +36,7 @@ export function ModulePage({
         className="module-hero"
         style={{ flexDirection: "row", alignItems: "center", gap: 16 }}
       >
-        <span className="module-hero-icon">
+        <span className="icon-tile">
           <ModuleIcon name={module.icon} />
         </span>
         <div className="module-hero-text">
