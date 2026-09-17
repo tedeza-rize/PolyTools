@@ -6,6 +6,7 @@ type Category string
 const (
 	CategorySystem    Category = "system"
 	CategoryWindowing Category = "windowing"
+	CategoryGaming    Category = "gaming"
 	CategoryInput     Category = "input"
 	CategoryFiles     Category = "files"
 	CategoryAdvanced  Category = "advanced"
@@ -15,6 +16,7 @@ const (
 var CategoryOrder = []Category{
 	CategorySystem,
 	CategoryWindowing,
+	CategoryGaming,
 	CategoryInput,
 	CategoryFiles,
 	CategoryAdvanced,
@@ -23,6 +25,7 @@ var CategoryOrder = []Category{
 var CategoryLabels = map[Category]string{
 	CategorySystem:    "System Tools",
 	CategoryWindowing: "Windowing & Layouts",
+	CategoryGaming:    "Gaming",
 	CategoryInput:     "Input / Output",
 	CategoryFiles:     "File Management",
 	CategoryAdvanced:  "Advanced",

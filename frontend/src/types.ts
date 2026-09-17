@@ -15,6 +15,7 @@ export type ModuleInfo = Info;
 export const CATEGORY_ORDER: Category[] = [
   Category.CategorySystem,
   Category.CategoryWindowing,
+  Category.CategoryGaming,
   Category.CategoryInput,
   Category.CategoryFiles,
   Category.CategoryAdvanced,
@@ -24,6 +25,7 @@ export const CATEGORY_LABELS: Record<Category, string> = {
   [Category.$zero]: "",
   [Category.CategorySystem]: "System Tools",
   [Category.CategoryWindowing]: "Windowing & Layouts",
+  [Category.CategoryGaming]: "Gaming",
   [Category.CategoryInput]: "Input / Output",
   [Category.CategoryFiles]: "File Management",
   [Category.CategoryAdvanced]: "Advanced",
