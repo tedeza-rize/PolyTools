@@ -27,7 +27,7 @@ func newHotkeyActions(app *application.App) *core.BaseModule {
 			{
 				Key: "bindings", Label: "Hotkey bindings",
 				Description: "One per line: shortcut = command (e.g. ctrl+alt+n = notepad).",
-				Type:        core.SettingText, Value: "ctrl+alt+n = notepad",
+				Type:        core.SettingTextarea, Value: "ctrl+alt+n = notepad",
 			},
 		},
 	})

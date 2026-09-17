@@ -25,7 +25,7 @@ func newKeyboardManager() *core.BaseModule {
 			{
 				Key: "remap", Label: "Key remapping",
 				Description: "One per line: Source = Target (e.g. CapsLock = Escape). Single keys only.",
-				Type:        core.SettingText, Value: "CapsLock = Escape",
+				Type:        core.SettingTextarea, Value: "CapsLock = Escape",
 			},
 		},
 	})

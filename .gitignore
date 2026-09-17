@@ -12,3 +12,4 @@ build/android/gen/
 
 # Wails generated bindings
 frontend/bindings/
+polytools.exe

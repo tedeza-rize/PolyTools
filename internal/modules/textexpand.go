@@ -33,7 +33,7 @@ func newTextExpander() *core.BaseModule {
 			{
 				Key: "rules", Label: "Expansions",
 				Description: "One per line: trigger = expansion",
-				Type:        core.SettingText, Value: ";mail = name@example.com\n;sig = Best regards,\n;addr = 123 Main Street",
+				Type:        core.SettingTextarea, Value: ";mail = name@example.com\n;sig = Best regards,\n;addr = 123 Main Street",
 			},
 		},
 	})
