@@ -6,6 +6,7 @@ import {
   Option,
   Slider,
   Switch,
+  Textarea,
 } from "@fluentui/react-components";
 import { SettingField, SettingType } from "../types";
 import { useT } from "../i18n";
@@ -165,6 +166,18 @@ export function SettingControl({
           value={String(field.value)}
           disabled={disabled}
           onChange={onChange}
+        />
+      );
+    case SettingType.SettingTextarea:
+      return (
+        <Textarea
+          size="small"
+          disabled={disabled}
+          value={String(field.value ?? "")}
+          onChange={(_, d) => onChange(d.value)}
+          rows={4}
+          className="rules-textarea"
+          style={{ minWidth: 340 }}
         />
       );
     case SettingType.SettingText:

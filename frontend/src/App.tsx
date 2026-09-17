@@ -11,8 +11,28 @@ import { SideNav, Route } from "./components/SideNav";
 import { Dashboard } from "./pages/Dashboard";
 import { General } from "./pages/General";
 import { ModulePage } from "./pages/ModulePage";
+import {
+  ExtractPage,
+  PeekPage,
+  RulerPage,
+  ScreensaverPage,
+} from "./pages/Tools";
 import { General as GeneralSettings, ModuleInfo } from "./types";
 import { I18nProvider, translatorFor } from "./i18n";
+
+// Dedicated overlay windows (ruler/extract/peek/screensaver) load the app
+// with ?page=... — render those without the settings shell.
+const TOOL_PAGES: Record<string, React.ComponentType> = {
+  ruler: RulerPage,
+  extract: ExtractPage,
+  peek: PeekPage,
+  screensaver: ScreensaverPage,
+};
+
+function toolPage(): React.ComponentType | null {
+  const page = new URLSearchParams(window.location.search).get("page");
+  return page ? TOOL_PAGES[page] ?? null : null;
+}
 
 function useSystemDark() {
   const [dark, setDark] = useState(
@@ -29,6 +49,7 @@ function useSystemDark() {
 
 export default function App() {
   const [route, setRoute] = useState<Route>("dashboard");
+  const tool = useMemo(toolPage, []);
   const [modules, setModules] = useState<ModuleInfo[]>([]);
   const [general, setGeneral] = useState<GeneralSettings>({
     runAtStartup: false,
@@ -91,6 +112,18 @@ export default function App() {
   const currentModule = route.startsWith("module:")
     ? modules.find((m) => m.key === route.slice(7))
     : undefined;
+
+  if (tool) {
+    const Tool = tool;
+    return (
+      <FluentProvider
+        theme={dark ? webDarkTheme : webLightTheme}
+        style={{ background: "transparent", height: "100%" }}
+      >
+        <Tool />
+      </FluentProvider>
+    );
+  }
 
   return (
     <FluentProvider

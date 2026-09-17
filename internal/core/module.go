@@ -40,6 +40,7 @@ const (
 	SettingSlider   SettingType = "slider"
 	SettingSelect   SettingType = "select"
 	SettingText     SettingType = "text"
+	SettingTextarea SettingType = "textarea"
 )
 
 type SelectOption struct {
