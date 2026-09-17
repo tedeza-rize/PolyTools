@@ -5,6 +5,8 @@ package services
 import (
 	"fmt"
 	"math"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
@@ -144,6 +146,10 @@ func (s *PolyToolsService) SystemInfo() SystemStats {
 	cv := regString(`SOFTWARE\Microsoft\Windows NT\CurrentVersion`, "ProductName")
 	dv := regString(`SOFTWARE\Microsoft\Windows NT\CurrentVersion`, "DisplayVersion")
 	bd := regString(`SOFTWARE\Microsoft\Windows NT\CurrentVersion`, "CurrentBuild")
+	// ProductName still says "Windows 10" on Windows 11 for compatibility.
+	if b, _ := strconv.Atoi(bd); b >= 22000 {
+		cv = strings.Replace(cv, "Windows 10", "Windows 11", 1)
+	}
 	if dv != "" || bd != "" {
 		cv = fmt.Sprintf("%s %s (Build %s)", cv, dv, bd)
 	}
