@@ -3,8 +3,14 @@
 package services
 
 import (
+	"fmt"
+	"math"
+	"time"
+
 	"github.com/wailsapp/wails/v3/pkg/application"
+	"golang.org/x/sys/windows/registry"
 	"polytools/internal/core"
+	"polytools/internal/win32"
 )
 
 // PolyToolsService is bound to the frontend. It exposes module state and
@@ -13,6 +19,9 @@ type PolyToolsService struct {
 	app *application.App
 	reg *core.Registry
 	win *application.WebviewWindow
+
+	lastCPUIdle  uint64
+	lastCPUTotal uint64
 }
 
 func (s *PolyToolsService) Attach(app *application.App, reg *core.Registry, win *application.WebviewWindow) {
@@ -94,4 +103,70 @@ func (s *PolyToolsService) ToggleMaximise() {
 
 func (s *PolyToolsService) Quit() {
 	s.app.Quit()
+}
+
+// --- system info ---
+
+// SystemStats is the live snapshot shown on the System Info module page.
+type SystemStats struct {
+	OS             string  `json:"os"`
+	CPUName        string  `json:"cpuName"`
+	CPUPercent     float64 `json:"cpuPercent"`
+	MemTotalBytes  uint64  `json:"memTotalBytes"`
+	MemUsedBytes   uint64  `json:"memUsedBytes"`
+	MemLoadPercent uint32  `json:"memLoadPercent"`
+	GPUName        string  `json:"gpuName"`
+	UptimeSeconds  uint64  `json:"uptimeSeconds"`
+	HasBattery     bool    `json:"hasBattery"`
+	BatteryPercent int     `json:"batteryPercent"`
+	BatteryOnAC    bool    `json:"batteryOnAC"`
+}
+
+func regString(path, name string) string {
+	k, err := registry.OpenKey(registry.LOCAL_MACHINE, path, registry.QUERY_VALUE)
+	if err != nil {
+		return ""
+	}
+	defer k.Close()
+	v, _, err := k.GetStringValue(name)
+	if err != nil {
+		return ""
+	}
+	return v
+}
+
+func (s *PolyToolsService) SystemInfo() SystemStats {
+	st := SystemStats{
+		GPUName:       win32.PrimaryGPUName(),
+		UptimeSeconds: win32.UptimeSeconds(),
+	}
+
+	cv := regString(`SOFTWARE\Microsoft\Windows NT\CurrentVersion`, "ProductName")
+	dv := regString(`SOFTWARE\Microsoft\Windows NT\CurrentVersion`, "DisplayVersion")
+	bd := regString(`SOFTWARE\Microsoft\Windows NT\CurrentVersion`, "CurrentBuild")
+	if dv != "" || bd != "" {
+		cv = fmt.Sprintf("%s %s (Build %s)", cv, dv, bd)
+	}
+	st.OS = cv
+	st.CPUName = regString(`HARDWARE\DESCRIPTION\System\CentralProcessor\0`, "ProcessorNameString")
+
+	total, avail, load := win32.MemoryStatus()
+	st.MemTotalBytes, st.MemUsedBytes, st.MemLoadPercent = total, total-avail, load
+	st.BatteryOnAC, st.BatteryPercent, st.HasBattery = win32.PowerStatus()
+
+	// CPU% = delta of (kernel+user) minus idle between calls.
+	idle, kern, usr := win32.SystemTimes()
+	tot := kern + usr
+	if s.lastCPUTotal == 0 {
+		time.Sleep(150 * time.Millisecond)
+		s.lastCPUIdle, s.lastCPUTotal = idle, tot
+		idle, kern, usr = win32.SystemTimes()
+		tot = kern + usr
+	}
+	if dTot := tot - s.lastCPUTotal; dTot > 0 {
+		dIdle := idle - s.lastCPUIdle
+		st.CPUPercent = math.Round((1-float64(dIdle)/float64(dTot))*1000) / 10
+	}
+	s.lastCPUIdle, s.lastCPUTotal = idle, tot
+	return st
 }

@@ -23,24 +23,6 @@ func newTextExtractor() *core.BaseModule {
 	})
 }
 
-func newColorPicker() *core.BaseModule {
-	return core.NewModule(core.Info{
-		Key:         "color-picker",
-		Name:        "Color Picker",
-		Description: "Pick colors from anywhere on the screen.",
-		Icon:        "Color",
-		Category:    core.CategorySystem,
-		Available:   false,
-		Settings: []core.SettingField{
-			{Key: "hotkey", Label: "Activation shortcut", Type: core.SettingShortcut, Value: "super+shift+c"},
-			{
-				Key:   "format", Label: "Color format", Type: core.SettingSelect, Value: "hex",
-				Options: []core.SelectOption{{Value: "hex", Label: "HEX"}, {Value: "rgb", Label: "RGB"}, {Value: "hsl", Label: "HSL"}},
-			},
-		},
-	})
-}
-
 func newScreenRuler() *core.BaseModule {
 	return core.NewModule(core.Info{
 		Key:         "screen-ruler",
@@ -310,22 +292,6 @@ func newScreensaver() *core.BaseModule {
 	})
 }
 
-func newWindowTransparency() *core.BaseModule {
-	return core.NewModule(core.Info{
-		Key:         "window-transparency",
-		Name:        "Window Transparency",
-		Description: "Make any window see-through with a shortcut.",
-		Icon:        "SquareHint",
-		Category:    core.CategoryWindowing,
-		Available:   false,
-		Settings: []core.SettingField{
-			{Key: "hotkey", Label: "Toggle transparency", Type: core.SettingShortcut, Value: "super+shift+o"},
-			{Key: "opacity", Label: "Opacity", Type: core.SettingSlider, Value: 80.0, Min: f64(10), Max: f64(100), Step: f64(5)},
-			{Key: "excludeOwn", Label: "Skip PolyTools window", Type: core.SettingToggle, Value: true},
-		},
-	})
-}
-
 func newMinimizeToTray() *core.BaseModule {
 	return core.NewModule(core.Info{
 		Key:         "minimize-to-tray",
@@ -359,16 +325,4 @@ func newTextExpander() *core.BaseModule {
 	})
 }
 
-func newSystemInfo() *core.BaseModule {
-	return core.NewModule(core.Info{
-		Key:         "system-info",
-		Name:        "System Info",
-		Description: "Show CPU, memory, GPU and system information.",
-		Icon:        "DesktopPulse",
-		Category:    core.CategorySystem,
-		Available:   false,
-		Settings: []core.SettingField{
-			{Key: "hotkey", Label: "Show system info", Type: core.SettingShortcut, Value: "super+shift+i"},
-		},
-	})
-}
+

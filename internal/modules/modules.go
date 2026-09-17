@@ -8,11 +8,12 @@ import (
 )
 
 // RegisterAll registers every module (implemented + coming soon).
-// app is passed to modules that need runtime services like global shortcuts.
-func RegisterAll(reg *core.Registry, app *application.App) {
+// app is passed to modules that need runtime services like global shortcuts;
+// win is the main window, for modules that must know their own HWND.
+func RegisterAll(reg *core.Registry, app *application.App, win *application.WebviewWindow) {
 	reg.Register(newAwake())
 	reg.Register(newTextExtractor())
-	reg.Register(newColorPicker())
+	reg.Register(newColorPicker(app))
 	reg.Register(newScreenRuler())
 	reg.Register(newBatteryManager())
 	reg.Register(newScreensaver())
@@ -22,7 +23,7 @@ func RegisterAll(reg *core.Registry, app *application.App) {
 	reg.Register(newGrabAndMove())
 	reg.Register(newWindowMemory())
 	reg.Register(newZoneLayouts())
-	reg.Register(newWindowTransparency())
+	reg.Register(newWindowTransparency(app, win))
 	reg.Register(newMinimizeToTray())
 
 	reg.Register(newBorderlessGaming())
