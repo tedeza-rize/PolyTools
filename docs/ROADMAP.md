@@ -80,13 +80,84 @@
 - `etc\hosts` 파싱 → 행 목록 UI(활성/비활성 주석 토글) → 저장 시 관리자 권한 필요
 - DNS flush 옵션(`ipconfig /flushdns`)
 
-## 제안 순서
+## 신규 제안 기능 검토 (실현 가능성)
+
+### 1. Borderless Gaming — 가능 (중)
+- 대상 창에 `SetWindowLongPtr(GWL_STYLE)`로 `WS_OVERLAPPED|WS_CAPTION|WS_THICKFRAME` 등 제거 → 모니터 작업영역 전체로 `SetWindowPos`
+- 게임 목록 설정 + `SetWinEventHook(EVENT_OBJECT_CREATE)`으로 창 등장 시 자동 적용
+- 한계: exclusive fullscreen(전체화면 전용) 모드는 못 건드림 — 창모드 지원 게임만. 일부 게임이 스타일을 되돌리면 이벤트로 재적용
+- 부가: 스타일 복원(토글 해제), 창 위치 지정, 프레임 출력(아래)과 시너지
+
+### 2. 프레임 출력 (FPS 오버레이) — 가능, 우회 경로 (중~상)
+- 진짜 인게임 오버레이(Render API 후킹+DLL 인젝션)는 Go로 사실상 불가 — C++ DLL 필요, 안티치트 충돌
+- **대안(권장): ETW `Microsoft-Windows-DXGI`/D3D9 Present 이벤트 소비** — PresentMon(MS 오픈소스)이 쓰는 방식. 인젝션 없이 프로세스별 Present 타임스탬프 수집 → FPS/frametime 계산. Go ETW 라이브러리(`bi-zone/etw` 등)로 소비 가능, 안티치트 안전
+- 표시: 화면 위 topmost 투명 오버레이 창에 숫자/그래프 (오버레이 헬퍼 재사용)
+- 리스크: Present 이벤트→FPS 해석 로직(PresentMon 참조 필요), 일부 프레젠트 경로 커버리지 차이
+
+### 3. Lossless Scaling — 부분 가능 (상)
+- 쉬운 버전(권장 1단계): 창 캡처(`PrintWindow`/Windows Graphics Capture) → 정수배 nearest 스케일 → 보더리스 전체화면 창에 출력 = **integer scaling**. 오래된/저해상도 게임에 실용적
+- 고급 버전: GPU 셰이더 업스케일(LS1/FSR1 공개 셰이더) — Go에선 `go-gl`(OpenGL) 컨텍스트 + fragment/compute shader로 이론상 가능하나 공수 큼. Graphics Capture의 WinRT 바인딩(winrt-go) 필요
+- 리스크: 캡처→표시 지연시간(인풋랙 체감), 프레임레이트
+- 판정: 1단계 정수 스케일링으로 시작, 반응 보고 확장
+
+### 4. 노트북 배터리 충전 제한 — 범용 불가 → 재정의 권장
+- 충전 임계값은 EC(임베디드 컨트롤러)/벤더 드라이버 영역 — **범용 Windows API 없음**. 삼성/ASUS/Lenovo 등 벤더 전용 서비스·WMI 경유라 벤더별 구현만 가능
+- 삼성 노트북이면 Samsung Settings 인터페이스 조사 가치 있으나 일반화 어려움
+- **대안(쉬움, 실용): 충전 알림 모듈** — `GetSystemPowerStatus` 폴링으로 목표%(예: 80) 도달 시 알림+사운드 → 물리적으로 어댑터 뽑게 유도. 벤더 무관하게 동작
+- 판정: 충전 제한 자체는 보류, 알림 모듈로 대체 제안
+
+### 5. 트리거 시스템 (블록 자동화) — 가능 (상이나 핵심 난제는 해결됨)
+- **에디터: Google Blockly 임베드** (Scratch/Entry의 실제 엔진, MIT) → 블록을 JSON으로 직렬화 → Go 인터프리터가 트리거별로 실행
+- 트리거 후보: 전역 핫키, 시간/스케줄, 창 열림·닫힘·포커스, 프로세스 시작·종료, 파일 변경(fsnotify), 배터리/전원 상태, 클립보드 변경, 유휴 시간
+- 액션 후보: 창 조작(이동/크기/최상위/투명), 앱/스크립트 실행, 키·마우스 주입(SendInput 매크로), 볼륨, 알림, HTTP 요청, 파일 작업, 다른 PolyTools 모듈 토글
+- 조건 블록: if/else, 비교, 창 타이틀/프로세스명 매치
+- 판정: **킬러 차별화 후보** — Windows에 마땅한 비주얼 자동화가 없음(Power Automate Desktop은 무겁고 계정/클라우드 지향). Blockly가 에디터 문제를 해결해 공수는 엔진+트리거 소스 쪽으로 이동
+- 단계: (a) JSON 블록 모델+인터프리터+핫키 트리거 (b) Blockly 에디터 UI (c) 트리거/액션 확장
+
+### 6. 단축키(핫키→액션) — 가능 (하~중)
+- RegisterHotKey 인프라 이미 있음. "핫키 → 앱 실행/스크립트/키 매크로/모듈 토글" 매핑 리스트
+- 5번 트리거 시스템의 트리거 종류로 자연 흡수 가능 — 단독으로 먼저 만들어도 되고
+- 조합키 매크로(SendInput 시퀀스)까지 하면 중간
+
+### 7. Win11 우클릭 메뉴 항목 추가 — 부분 가능
+- **쉬운 버전**: 레거시 verb 등록(`HKCU\Software\Classes\*\shell`, `Directory\shell`, `Directory\Background\shell` 등) → Win11에선 "추가 옵션 표시" 클래식 메뉴에 나타남. 순수 레지스트리 편집 — 항목명/아이콘/명령 지정 가능
+- **최상위 모던 메뉴**: sparse MSIX 패키지 + `IExplorerCommand` COM in-proc DLL 필요 → Go 단독 불가, C++ shim + 패키징. 대형, 후순위
+- 판정: 클래식 메뉴 경로로 먼저 제공(여전히 유용 — "여기서 터미널", "PolyTools로 보내기" 등), 모던 메뉴는 별도 컴포넌트 필요 시 검토
+
+### 8. 커스텀 화면보호기 (영상/웹) — 가능 (중), 재미있는 차별화
+- `.scr` = `/s`(실행) `/c`(설정) `/p`(미리보기) 인자를 처리하는 exe → System32 배치 시 Windows 화면보호기 목록에 등록(관리자 필요)
+- `/s` 호출 시 모니터별 전체화면 WebView2 창 → 영상(MP4/WebM/YouTube 임베드), 웹페이지, 이미지 슬라이드, 자체 HTML 등 **웹 기술로 무엇이든**
+- 대안 경로: Windows 인프라 안 쓰고 `GetLastInputInfo`로 유휴 감지 → 자체 전체화면 표시 (등록·관리자 불필요, 단 잠금 연동 없음)
+- 주의: WebView2 유저데이터 폴더는 쓰기 가능한 경로, 마우스 이동 감지는 초기 위치 스냅샷 후 델타, 멀티모니터 각각 창 생성
+
+## 추가 후보 (Windows 갭 + Go 실현성)
+
+| 기능 | 난이도 | 비고 |
+|---|---|---|
+| Paste as Plain Text | 하 | 핫키 → 클립보드 서식 제거 → Ctrl+V. 실용적, Windows에 없음 |
+| 창 투명화 단축키 | 하 | 임의 창 `SetLayeredWindowAttributes` — 클래식 갭 |
+| 창을 트레이로 최소화 | 하~중 | 창 숨김 + 트레이 서브메뉴/아이콘 |
+| 모니터 전원 끄기 핫키 | 하 | `WM_SYSCOMMAND SC_MONITORPOWER` — 노트북에 유용 |
+| 오디오 장치 전환/앱별 볼륨 | 중 | Core Audio API — `moutend/go-wca` 바인딩 존재 |
+| Power Display (DDC/CI) | 중 | 외장 모니터 밝기/대비 — `dxva2.dll` 물리모니터 API |
+| 텍스트 확장기 (`;mail`→이메일) | 중 | 키보드 훅 + SendInput. 트리거 시스템 액션으로도 |
+| Screen to GIF | 중~상 | 영역 캡처 + `image/gif` 인코딩 = 순수 Go 가능 |
+| 화면 감마/색온도 스케줄 | 하 | `SetDeviceGammaRamp` — 나이트라이트 커스텀판 |
+| Workspaces (창 배치 저장·복원) | 중 | Window Memory 연계, 수동 트리거형 |
+| 입력 시각화 오버레이 | 중 | 스트리머용 키/마우스 표시 — 훅 + 오버레이 헬퍼 |
+| 데스크탑 아이콘 토글/정리 | 하 | Progman/SysListView32 show·hide |
+| 프로세스 규칙 (우선순위·affinity 고정) | 중 | 프로세스 감시 + SetPriorityClass/SetProcessAffinityMask |
+| Wi-Fi/Bluetooth 토글 핫키 | 중 | WinRT Radios API — winrt-go 경유 |
+
+## 제안 순서 (갱신)
 
 1. 공통 기반 (핫키 캡처, 오버레이 헬퍼, 훅 프레임워크)
-2. Color Picker / Env Vars / Hosts — 쉬운 실전 모듈로 골격 검증
+2. 쉬운 실전: Color Picker, Env Vars, Hosts, Paste as Plain Text, 창 투명화, 충전 알림
 3. Grab And Move — 훅 프레임워크 첫 적용
-4. Window Memory
-5. 대형: Zone Layouts → Keyboard Manager → Text Extractor
+4. Window Memory → Borderless Gaming (창 감시 기반 공유)
+5. 트리거 시스템 (킬러 기능 — 핫키 매크로/단축키 기능 흡수)
+6. 우클릭 메뉴(클래식), 화면보호기
+7. 대형: Zone Layouts → Keyboard Manager → 프레임 출력(ETW) → Text Extractor → Lossless Scaling
 
 ## 아키텍처 참고
 
