@@ -62,6 +62,9 @@ const (
 	processQueryLimitedInfo = 0x1000
 )
 
+// WSOverlapped is the mask of frame styles removed for borderless mode.
+const WSOverlapped = wsOverlapped
+
 type Rect struct {
 	Left, Top, Right, Bottom int32
 }
@@ -78,6 +81,11 @@ func WindowTitle(hwnd uintptr) string {
 	buf := make([]uint16, n+1)
 	procGetWindowText.Call(hwnd, uintptr(unsafe.Pointer(&buf[0])), n+1)
 	return windows.UTF16ToString(buf)
+}
+
+// WindowPid writes the owning process id into out.
+func WindowPid(hwnd uintptr, out *uint32) {
+	procGetWindowThreadProcess.Call(hwnd, uintptr(unsafe.Pointer(out)))
 }
 
 // WindowExe returns the process image name (e.g. "notepad.exe") owning hwnd.

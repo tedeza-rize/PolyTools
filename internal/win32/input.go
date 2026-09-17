@@ -161,6 +161,21 @@ func IdleSeconds() uint32 {
 	return uint32((uint64(tick) - uint64(lii.DwTime)) / 1000)
 }
 
+// VKToChar translates a key press to a rune using the caller-maintained
+// keyboard state array (ToUnicode). Returns 0 for non-character keys.
+func VKToChar(vk, scan uint16, state *[256]byte) rune {
+	var out [8]uint16
+	n, _, _ := procToUnicode.Call(
+		uintptr(vk), uintptr(scan),
+		uintptr(unsafe.Pointer(state)),
+		uintptr(unsafe.Pointer(&out[0])), 8, 0,
+	)
+	if n <= 0 {
+		return 0
+	}
+	return rune(out[0])
+}
+
 // VKFromName maps friendly key names to virtual-key codes (for remapping
 // tables like "CapsLock = Escape").
 var VKByName = map[string]uint16{

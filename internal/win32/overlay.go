@@ -255,6 +255,51 @@ func (o *Overlay) Move(x, y int32) {
 		swpNoSize|swpNoZOrder|swpNoActivate)
 }
 
+var (
+	procCreateFont  = gdi32.NewProc("CreateFontW")
+	procTextOut     = gdi32.NewProc("TextOutW")
+	procSetTextColor = gdi32.NewProc("SetTextColor")
+	procSetBkMode   = gdi32.NewProc("SetBkMode")
+)
+
+// Text draws white text at (x,y) with the given pixel height using GDI.
+// GDI writes RGB but leaves the alpha byte at 0 on DIB sections, so after
+// drawing we convert luminance to alpha for antialiased white text.
+func (o *Overlay) Text(s string, x, y, height int32) {
+	font, _, _ := procCreateFont.Call(
+		uintptr(height), 0, 0, 0, 700, 0, 0, 0,
+		1, 0, 0, 5, 0,
+		uintptr(unsafe.Pointer(fontName())),
+	)
+	defer procDeleteObject.Call(font)
+	procSelectObject.Call(o.memDC, font)
+	procSetBkMode.Call(o.memDC, 1) // TRANSPARENT
+	procSetTextColor.Call(o.memDC, 0x00FFFFFF)
+	u16, _ := windows.UTF16FromString(s)
+	procTextOut.Call(o.memDC, uintptr(x), uintptr(y),
+		uintptr(unsafe.Pointer(&u16[0])), uintptr(len(u16)-1))
+
+	// Alpha-fix pass over the whole buffer: pixels GDI touched have alpha 0
+	// but RGB > 0; use luminance as coverage for white text.
+	for i := 0; i+3 < len(o.pix); i += 4 {
+		if o.pix[i+3] == 0 && (o.pix[i]|o.pix[i+1]|o.pix[i+2]) != 0 {
+			lum := o.pix[i]
+			if o.pix[i+1] > lum {
+				lum = o.pix[i+1]
+			}
+			if o.pix[i+2] > lum {
+				lum = o.pix[i+2]
+			}
+			o.pix[i], o.pix[i+1], o.pix[i+2], o.pix[i+3] = lum, lum, lum, lum
+		}
+	}
+}
+
+func fontName() *uint16 {
+	name, _ := windows.UTF16PtrFromString("Segoe UI")
+	return name
+}
+
 // Destroy frees the window and GDI resources.
 func (o *Overlay) Destroy() {
 	o.mu.Lock()

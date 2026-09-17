@@ -3,11 +3,13 @@ module polytools
 go 1.25.0
 
 require (
+	github.com/0xrawsec/golang-etw v1.6.2
 	github.com/wailsapp/wails/v3 v3.0.0-beta.23
 	golang.org/x/sys v0.46.0
 )
 
 require (
+	github.com/0xrawsec/golang-utils v1.3.1 // indirect
 	github.com/adrg/xdg v0.5.3 // indirect
 	github.com/coder/websocket v1.8.14 // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect

@@ -9,37 +9,39 @@ import (
 
 // RegisterAll registers every module (implemented + coming soon).
 // app is passed to modules that need runtime services like global shortcuts;
-// win is the main window, for modules that must know their own HWND.
-func RegisterAll(reg *core.Registry, app *application.App, win *application.WebviewWindow) {
+// win is the main window, for modules that must know their own HWND;
+// tray + showMain let Minimize To Tray extend the tray menu.
+func RegisterAll(reg *core.Registry, app *application.App, win *application.WebviewWindow, tray *application.SystemTray, showMain func()) {
 	reg.Register(newAwake())
-	reg.Register(newTextExtractor())
+	reg.Register(newTextExtractor(app))
 	reg.Register(newColorPicker(app))
-	reg.Register(newScreenRuler())
+	reg.Register(newScreenRuler(app))
 	reg.Register(newBatteryManager())
-	reg.Register(newScreensaver())
+	reg.Register(newScreensaver(app))
 	reg.Register(newSystemInfo())
 
 	reg.Register(newAlwaysOnTop(app))
-	reg.Register(newGrabAndMove())
+	reg.Register(newGrabAndMove(app, win))
 	reg.Register(newWindowMemory())
-	reg.Register(newZoneLayouts())
+	reg.Register(newZoneLayouts(app, win))
 	reg.Register(newWindowTransparency(app, win))
-	reg.Register(newMinimizeToTray())
+	reg.Register(newMinimizeToTray(app, tray, showMain))
 
-	reg.Register(newBorderlessGaming())
-	reg.Register(newFpsOverlay())
-	reg.Register(newLosslessScaling())
+	reg.Register(newBorderlessGaming(app))
+	reg.Register(newFpsOverlay(app))
+	reg.Register(newLosslessScaling(app))
 
 	reg.Register(newKeyboardManager())
-	reg.Register(newMouseUtilities())
-	reg.Register(newHotkeyActions())
+	reg.Register(newMouseUtilities(app))
+	reg.Register(newHotkeyActions(app))
 	reg.Register(newTextExpander())
+	reg.Register(newPastePlain(app))
 
 	reg.Register(newBatchRename())
-	reg.Register(newQuickPeek())
+	reg.Register(newQuickPeek(app))
 	reg.Register(newContextMenu())
 
 	reg.Register(newEnvVars())
 	reg.Register(newHostsEditor())
-	reg.Register(newAutomations())
+	reg.Register(newAutomations(app))
 }
