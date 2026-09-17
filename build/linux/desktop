@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Name=PolyTools
+Comment=Windows utilities for power users
+# The Exec line includes %u to pass the URL to the application
+Exec=/usr/local/bin/polytools.exe %u
+Terminal=false
+Type=Application
+Icon=polytools.exe
+Categories=Utility;
+StartupWMClass=polytools.exe
+
+ 
