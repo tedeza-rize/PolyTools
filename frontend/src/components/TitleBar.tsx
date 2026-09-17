@@ -1,6 +1,6 @@
-import { SearchBox } from "@fluentui/react-components";
 import {
   AppsListDetailRegular,
+  ArrowLeftRegular,
   SubtractRegular,
   SquareRegular,
   SquareMultipleRegular,
@@ -10,13 +10,13 @@ import { PolyToolsService } from "../../bindings/polytools/internal/services";
 import { useT } from "../i18n";
 
 export function TitleBar({
-  query,
-  onQuery,
+  canGoBack,
+  onBack,
   maximised,
   onMaximise,
 }: {
-  query: string;
-  onQuery: (q: string) => void;
+  canGoBack: boolean;
+  onBack: () => void;
   maximised: boolean;
   onMaximise: () => void;
 }) {
@@ -24,23 +24,22 @@ export function TitleBar({
   return (
     <div className="titlebar">
       <div className="titlebar-brand">
+        {canGoBack && (
+          <button
+            className="titlebar-back"
+            onClick={onBack}
+            aria-label={t("nav.back")}
+          >
+            <ArrowLeftRegular />
+          </button>
+        )}
         <span className="titlebar-icon">
           <AppsListDetailRegular />
         </span>
         <span>PolyTools</span>
       </div>
 
-      <div className="titlebar-search">
-        <div className="titlebar-search-inner">
-          <SearchBox
-            size="small"
-            placeholder={t("search.placeholder")}
-            value={query}
-            onChange={(_, d) => onQuery(d.value)}
-            style={{ width: "100%" }}
-          />
-        </div>
-      </div>
+      <div className="titlebar-spacer" />
 
       <div className="caption-buttons">
         <button

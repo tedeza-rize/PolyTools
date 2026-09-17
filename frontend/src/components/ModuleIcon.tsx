@@ -28,6 +28,41 @@ import {
   WindowMultipleRegular,
 } from "@fluentui/react-icons";
 
+// Distinct accent color per module, like the multicolored icons in
+// Windows 11 Settings' navigation.
+const COLORS: Record<string, string> = {
+  Pin: "#0f6cbd",
+  WeatherMoon: "#5b5fc7",
+  TextFont: "#038387",
+  Color: "#c239b3",
+  Ruler: "#ca5010",
+  BatteryCharge: "#107c10",
+  Tv: "#0f6cbd",
+  DesktopPulse: "#008272",
+  ArrowMove: "#0078d4",
+  WindowMultiple: "#0f6cbd",
+  Grid: "#486860",
+  SquareHint: "#69797e",
+  ArrowMinimize: "#5b5fc7",
+  BorderNone: "#107c10",
+  Gauge: "#d13438",
+  ArrowMaximize: "#008272",
+  Keyboard: "#5a5a5a",
+  Cursor: "#0f6cbd",
+  KeyCommand: "#5b5fc7",
+  TextExpand: "#107c10",
+  Rename: "#ca5010",
+  Eye: "#0078d4",
+  MoreHorizontal: "#69797e",
+  BracesVariable: "#107c10",
+  Globe: "#0078d4",
+  Flow: "#5b5fc7",
+};
+
+export function moduleColor(name: string): string {
+  return COLORS[name] ?? "#0f6cbd";
+}
+
 const ICONS: Record<string, JSX.Element> = {
   Pin: <PinRegular />,
   WeatherMoon: <WeatherMoonRegular />,

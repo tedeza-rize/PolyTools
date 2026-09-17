@@ -1,7 +1,8 @@
 import { Badge, Card, Switch } from "@fluentui/react-components";
-import { ModuleInfo, SettingField } from "../types";
+import { ChevronRightRegular } from "@fluentui/react-icons";
+import { CATEGORY_LABELS, ModuleInfo, SettingField } from "../types";
 import { useT } from "../i18n";
-import { ModuleIcon } from "../components/ModuleIcon";
+import { ModuleIcon, moduleColor } from "../components/ModuleIcon";
 import { SettingControl } from "../components/SettingControl";
 import { SystemInfoPanel } from "../components/SystemInfoPanel";
 
@@ -21,6 +22,7 @@ export function ModulePage({
 }) {
   const t = useT();
   const disabled = !module.available || !module.enabled;
+  const color = moduleColor(module.icon);
 
   // Translate declarative field labels/descriptions/option labels with
   // fallback to the backend-provided English text.
@@ -36,17 +38,29 @@ export function ModulePage({
     })),
   });
 
+  const settings = (module.settings ?? []).map(localize);
+
   return (
     <div className="content-inner">
+      <div className="breadcrumb">
+        <span className="breadcrumb-part">
+          {t(`cat.${module.category}`, CATEGORY_LABELS[module.category])}
+        </span>
+        <ChevronRightRegular className="breadcrumb-sep" />
+        <span className="breadcrumb-part current">
+          {t(`module.${module.key}.name`, module.name)}
+        </span>
+      </div>
+
       <Card
-        className="module-hero"
-        style={{ flexDirection: "row", alignItems: "center", gap: 16 }}
+        className="module-header"
+        style={{ flexDirection: "row", alignItems: "center" }}
       >
-        <span className="icon-tile">
+        <span className="icon-tile" style={{ ["--tile-color" as any]: color }}>
           <ModuleIcon name={module.icon} />
         </span>
-        <div className="module-hero-text">
-          <div className="module-hero-name">
+        <div className="module-header-text">
+          <div className="module-header-name">
             {t(`module.${module.key}.name`, module.name)}{" "}
             {!module.available && (
               <Badge size="medium" color="informative">
@@ -54,7 +68,7 @@ export function ModulePage({
               </Badge>
             )}
           </div>
-          <div className="module-hero-desc">
+          <div className="module-header-desc">
             {t(`module.${module.key}.desc`, module.description)}
           </div>
         </div>
@@ -71,29 +85,26 @@ export function ModulePage({
         return Extra ? <Extra module={module} /> : null;
       })()}
 
-      {module.settings && module.settings.length > 0 && (
+      {settings.length > 0 && (
         <>
           <div className="section-label">{t("module.settings")}</div>
-          {module.settings.map(localize).map((f) => (
-            <Card
-              size="small"
-              className="setting-card"
-              key={f.key}
-              style={{ flexDirection: "row", alignItems: "center", gap: 16 }}
-            >
-              <div className="setting-text">
-                <div className="setting-label">{f.label}</div>
-                {f.description && (
-                  <div className="setting-desc">{f.description}</div>
-                )}
+          <Card className="setting-group" size="small">
+            {settings.map((f) => (
+              <div className="setting-row" key={f.key}>
+                <div className="setting-text">
+                  <div className="setting-label">{f.label}</div>
+                  {f.description && (
+                    <div className="setting-desc">{f.description}</div>
+                  )}
+                </div>
+                <SettingControl
+                  field={f}
+                  disabled={disabled}
+                  onChange={(v) => onSetting(module.key, f.key, v)}
+                />
               </div>
-              <SettingControl
-                field={f}
-                disabled={disabled}
-                onChange={(v) => onSetting(module.key, f.key, v)}
-              />
-            </Card>
-          ))}
+            ))}
+          </Card>
         </>
       )}
     </div>

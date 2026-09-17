@@ -78,16 +78,27 @@ body,
   box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.25);
 }
 
-.titlebar-search {
-  flex: 1;
+.titlebar-back {
   display: flex;
+  align-items: center;
   justify-content: center;
-  padding: 0 16px;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--colorNeutralForeground1, inherit);
+  font-size: 15px;
+  cursor: default;
+  transition: background 80ms ease;
 }
 
-.titlebar-search-inner {
-  width: 340px;
-  max-width: 100%;
+.titlebar-back:hover {
+  background: color-mix(in srgb, currentColor 8%, transparent);
+}
+
+.titlebar-spacer {
+  flex: 1;
 }
 
 .caption-buttons {
@@ -136,33 +147,75 @@ body,
   width: 292px;
   flex-shrink: 0;
   overflow-y: auto;
-  padding: 10px 8px 24px 14px;
+  padding: 4px 8px 24px 16px;
   scrollbar-width: thin;
 }
 
+.sidenav-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 8px 12px;
+}
+
+.sidenav-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  font-size: 22px;
+  color: #fff;
+  background: linear-gradient(
+    135deg,
+    var(--colorBrandBackground, #0f6cbd),
+    var(--colorBrandBackground2, #115ea3)
+  );
+  box-shadow:
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.25),
+    0 2px 8px color-mix(in srgb, var(--colorBrandBackground, #0f6cbd) 30%, transparent);
+  flex-shrink: 0;
+}
+
+.sidenav-app-name {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.sidenav-app-sub {
+  font-size: 12px;
+  color: var(--colorNeutralForeground2, inherit);
+  opacity: 0.8;
+  margin-top: 1px;
+}
+
+.sidenav-search {
+  padding: 2px 8px 12px;
+}
+
 .sidenav-group {
-  margin-top: 18px;
+  margin-top: 14px;
 }
 
 .sidenav-group-label {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
   color: var(--colorNeutralForeground3, inherit);
-  opacity: 0.75;
-  padding: 4px 12px 6px;
+  opacity: 0.8;
+  padding: 4px 12px 4px;
 }
 
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   width: 100%;
-  padding: 7px 12px;
+  height: 34px;
+  padding: 0 12px;
   margin: 1px 0;
   border: none;
-  border-radius: 6px;
+  border-radius: 5px;
   background: transparent;
   color: var(--colorNeutralForeground1, inherit);
   font-size: 13px;
@@ -185,22 +238,17 @@ body,
   content: "";
   position: absolute;
   left: 0;
-  top: 8px;
-  bottom: 8px;
+  top: 9px;
+  bottom: 9px;
   width: 3px;
   border-radius: 2px;
   background: var(--colorBrandBackground, #0f6cbd);
 }
 
 .nav-item-icon {
-  font-size: 17px;
+  font-size: 16px;
   display: flex;
   flex-shrink: 0;
-  color: var(--colorNeutralForeground2, inherit);
-}
-
-.nav-item.selected .nav-item-icon {
-  color: var(--colorNeutralForeground1, inherit);
 }
 
 .nav-item-label {
@@ -265,27 +313,38 @@ body,
     0 0 0 1px color-mix(in srgb, currentColor 7%, transparent);
 }
 
+.module-card-chevron {
+  font-size: 12px;
+  color: var(--colorNeutralForeground3, inherit);
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
 .module-card-head {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-/* tinted icon tile, like PowerToys module icons */
+/* tinted icon tile; per-module accent via --tile-color */
 .icon-tile {
   display: flex;
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-  color: var(--colorBrandForeground1, var(--colorBrandBackground, #0f6cbd));
+  color: var(--tile-color, var(--colorBrandBackground, #0f6cbd));
   background: color-mix(
     in srgb,
-    var(--colorBrandBackground, #0f6cbd) 12%,
+    var(--tile-color, var(--colorBrandBackground, #0f6cbd)) 13%,
     transparent
   );
   box-shadow: inset 0 0 0 1px
-    color-mix(in srgb, var(--colorBrandBackground, #0f6cbd) 18%, transparent);
+    color-mix(
+      in srgb,
+      var(--tile-color, var(--colorBrandBackground, #0f6cbd)) 20%,
+      transparent
+    );
 }
 
 .module-card .icon-tile {
@@ -316,71 +375,105 @@ body,
 
 /* ---------- module page ---------- */
 
-.module-hero {
+.breadcrumb {
   display: flex;
   align-items: center;
-  gap: 18px;
-  padding: 22px;
-  margin: 8px 0 20px;
-  border-radius: 10px;
-  background: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--colorBrandBackground, #0f6cbd) 9%, transparent),
-    color-mix(in srgb, var(--colorBrandBackground, #0f6cbd) 4%, transparent)
-  );
-  box-shadow: inset 0 0 0 1px
-    color-mix(in srgb, var(--colorBrandBackground, #0f6cbd) 14%, transparent);
+  gap: 6px;
+  margin: 18px 0 14px;
+  font-size: 13px;
+  color: var(--colorNeutralForeground2, inherit);
 }
 
-.module-hero .icon-tile {
-  width: 56px;
-  height: 56px;
-  font-size: 30px;
-  border-radius: 10px;
-  color: #fff;
-  background: linear-gradient(
-    135deg,
-    var(--colorBrandBackground, #0f6cbd),
-    var(--colorBrandBackground2, #115ea3)
-  );
-  box-shadow: 0 2px 6px
-    color-mix(in srgb, var(--colorBrandBackground, #0f6cbd) 35%, transparent);
+.breadcrumb-part {
+  opacity: 0.75;
 }
 
-.module-hero-text {
+.breadcrumb-part.current {
+  font-weight: 600;
+  opacity: 1;
+  color: var(--colorNeutralForeground1, inherit);
+}
+
+.breadcrumb-sep {
+  font-size: 11px;
+  opacity: 0.5;
+}
+
+/* flat header card — Windows 11 Settings feature page style */
+.module-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  margin: 0 0 16px;
+  border-radius: 8px;
+  flex-direction: row;
+}
+
+.module-header .icon-tile {
+  width: 44px;
+  height: 44px;
+  font-size: 24px;
+  border-radius: 8px;
+}
+
+.module-header-text {
   flex: 1;
   min-width: 0;
 }
 
-.module-hero-name {
-  font-size: 20px;
+.module-header-name {
+  font-size: 15px;
   font-weight: 600;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.module-hero-desc {
-  font-size: 13px;
+.module-header-desc {
+  font-size: 12.5px;
   color: var(--colorNeutralForeground2, inherit);
   opacity: 0.85;
-  margin-top: 4px;
+  margin-top: 3px;
   line-height: 1.4;
 }
 
 /* ---------- settings rows ---------- */
 
-.setting-card {
+/* one card containing all rows, separated by hairlines — like the
+   grouped lists in Windows 11 Settings */
+.setting-group {
+  padding: 0;
+  border-radius: 8px;
+}
+
+.setting-row {
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 13px 20px;
-  margin-bottom: 6px;
+  padding: 12px 20px;
+  min-height: 56px;
   transition: background 80ms ease;
 }
 
-.setting-card:hover {
+.setting-row:hover {
   background: color-mix(in srgb, currentColor 3%, transparent);
+}
+
+.setting-row:first-child {
+  border-radius: 8px 8px 0 0;
+}
+
+.setting-row:last-child {
+  border-radius: 0 0 8px 8px;
+}
+
+.setting-row:only-child {
+  border-radius: 8px;
+}
+
+.setting-row + .setting-row {
+  border-top: 1px solid color-mix(in srgb, currentColor 8%, transparent);
 }
 
 .setting-text {

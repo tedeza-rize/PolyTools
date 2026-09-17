@@ -9,6 +9,14 @@ import {
 import { General as GeneralSettings } from "../types";
 import { useT } from "../i18n";
 
+function Group({ children }: { children: React.ReactNode }) {
+  return (
+    <Card className="setting-group" size="small">
+      {children}
+    </Card>
+  );
+}
+
 function Row({
   label,
   desc,
@@ -16,20 +24,16 @@ function Row({
 }: {
   label: string;
   desc?: string;
-  control: JSX.Element;
+  control?: JSX.Element;
 }) {
   return (
-    <Card
-      size="small"
-      className="setting-card"
-      style={{ flexDirection: "row", alignItems: "center", gap: 16 }}
-    >
+    <div className="setting-row">
       <div className="setting-text">
         <div className="setting-label">{label}</div>
         {desc && <div className="setting-desc">{desc}</div>}
       </div>
       {control}
-    </Card>
+    </div>
   );
 }
 
@@ -68,68 +72,67 @@ export function General({
       </Text>
 
       <div className="section-label">{t("general.startup")}</div>
-      <Row
-        label={t("general.runAtStartup")}
-        desc={t("general.runAtStartup.desc")}
-        control={
-          <Switch
-            checked={general.runAtStartup}
-            onChange={(_, d) => onRunAtStartup(d.checked)}
-          />
-        }
-      />
+      <Group>
+        <Row
+          label={t("general.runAtStartup")}
+          desc={t("general.runAtStartup.desc")}
+          control={
+            <Switch
+              checked={general.runAtStartup}
+              onChange={(_, d) => onRunAtStartup(d.checked)}
+            />
+          }
+        />
+      </Group>
 
       <div className="section-label">{t("general.appearance")}</div>
-      <Row
-        label={t("general.theme")}
-        desc={t("general.theme.desc")}
-        control={
-          <Dropdown
-            size="small"
-            selectedOptions={[general.theme]}
-            value={THEMES.find((x) => x.value === general.theme)?.label}
-            onOptionSelect={(_, d) => d.optionValue && onTheme(d.optionValue)}
-            style={{ minWidth: 180 }}
-          >
-            {THEMES.map((x) => (
-              <Option key={x.value} value={x.value}>
-                {x.label}
-              </Option>
-            ))}
-          </Dropdown>
-        }
-      />
-      <Row
-        label={t("general.language")}
-        desc={t("general.language.desc")}
-        control={
-          <Dropdown
-            size="small"
-            selectedOptions={[general.language]}
-            value={LANGS.find((x) => x.value === general.language)?.label}
-            onOptionSelect={(_, d) => d.optionValue && onLanguage(d.optionValue)}
-            style={{ minWidth: 180 }}
-          >
-            {LANGS.map((x) => (
-              <Option key={x.value} value={x.value}>
-                {x.label}
-              </Option>
-            ))}
-          </Dropdown>
-        }
-      />
+      <Group>
+        <Row
+          label={t("general.theme")}
+          desc={t("general.theme.desc")}
+          control={
+            <Dropdown
+              size="small"
+              selectedOptions={[general.theme]}
+              value={THEMES.find((x) => x.value === general.theme)?.label}
+              onOptionSelect={(_, d) => d.optionValue && onTheme(d.optionValue)}
+              style={{ minWidth: 180 }}
+            >
+              {THEMES.map((x) => (
+                <Option key={x.value} value={x.value}>
+                  {x.label}
+                </Option>
+              ))}
+            </Dropdown>
+          }
+        />
+        <Row
+          label={t("general.language")}
+          desc={t("general.language.desc")}
+          control={
+            <Dropdown
+              size="small"
+              selectedOptions={[general.language]}
+              value={LANGS.find((x) => x.value === general.language)?.label}
+              onOptionSelect={(_, d) =>
+                d.optionValue && onLanguage(d.optionValue)
+              }
+              style={{ minWidth: 180 }}
+            >
+              {LANGS.map((x) => (
+                <Option key={x.value} value={x.value}>
+                  {x.label}
+                </Option>
+              ))}
+            </Dropdown>
+          }
+        />
+      </Group>
 
       <div className="section-label">{t("general.about")}</div>
-      <Card
-        size="small"
-        className="setting-card"
-        style={{ flexDirection: "row", alignItems: "center", gap: 16 }}
-      >
-        <div className="setting-text">
-          <div className="setting-label">PolyTools</div>
-          <div className="setting-desc">{t("general.about.desc")}</div>
-        </div>
-      </Card>
+      <Group>
+        <Row label="PolyTools" desc={t("general.about.desc")} />
+      </Group>
     </div>
   );
 }

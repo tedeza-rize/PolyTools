@@ -3,6 +3,8 @@
 export const en: Record<string, string> = {
   "nav.dashboard": "Dashboard",
   "nav.general": "General",
+  "nav.back": "Back",
+  "nav.subtitle": "Utilities for Windows",
   "search.placeholder": "Find a utility or setting",
   "badge.soon": "Soon",
   "badge.comingSoon": "Coming soon",

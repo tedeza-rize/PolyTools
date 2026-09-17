@@ -100,8 +100,8 @@ export default function App() {
       <I18nProvider value={t}>
       <div className="app-shell">
         <TitleBar
-          query={query}
-          onQuery={setQuery}
+          canGoBack={route !== "dashboard"}
+          onBack={() => setRoute("dashboard")}
           maximised={maximised}
           onMaximise={() => {
             PolyToolsService.ToggleMaximise().catch(console.error);
@@ -109,7 +109,13 @@ export default function App() {
           }}
         />
         <div className="app-body">
-          <SideNav modules={filtered} route={route} onNavigate={setRoute} />
+          <SideNav
+            modules={filtered}
+            route={route}
+            query={query}
+            onQuery={setQuery}
+            onNavigate={setRoute}
+          />
           <main className="content">
             {route === "dashboard" && (
               <Dashboard

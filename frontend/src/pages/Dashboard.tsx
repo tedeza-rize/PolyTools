@@ -1,7 +1,8 @@
 import { Badge, Card, Switch, Title2, Text } from "@fluentui/react-components";
 import { ModuleInfo } from "../types";
 import { useT } from "../i18n";
-import { ModuleIcon } from "../components/ModuleIcon";
+import { ChevronRightRegular } from "@fluentui/react-icons";
+import { ModuleIcon, moduleColor } from "../components/ModuleIcon";
 
 export function Dashboard({
   modules,
@@ -31,7 +32,10 @@ export function Dashboard({
             onClick={() => onOpen(m.key)}
           >
             <div className="module-card-head">
-              <span className="icon-tile">
+              <span
+                className="icon-tile"
+                style={{ ["--tile-color" as any]: moduleColor(m.icon) }}
+              >
                 <ModuleIcon name={m.icon} />
               </span>
               <div style={{ flex: 1, minWidth: 0 }}>
@@ -53,6 +57,7 @@ export function Dashboard({
                 onClick={(e) => e.stopPropagation()}
                 onChange={(_, d) => onToggle(m.key, d.checked)}
               />
+              <ChevronRightRegular className="module-card-chevron" />
             </div>
           </Card>
         ))}

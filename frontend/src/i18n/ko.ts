@@ -3,6 +3,8 @@
 export const ko: Record<string, string> = {
   "nav.dashboard": "대시보드",
   "nav.general": "일반",
+  "nav.back": "뒤로",
+  "nav.subtitle": "Windows 유틸리티 모음",
   "search.placeholder": "유틸리티 또는 설정 검색",
   "badge.soon": "예정",
   "badge.comingSoon": "준비 중",
