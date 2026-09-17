@@ -3,6 +3,12 @@ import { ModuleInfo, SettingField } from "../types";
 import { useT } from "../i18n";
 import { ModuleIcon } from "../components/ModuleIcon";
 import { SettingControl } from "../components/SettingControl";
+import { SystemInfoPanel } from "../components/SystemInfoPanel";
+
+// Per-module rich content rendered between the hero card and the settings list.
+const MODULE_EXTRAS: Record<string, React.ComponentType<{ module: ModuleInfo }>> = {
+  "system-info": SystemInfoPanel,
+};
 
 export function ModulePage({
   module,
@@ -59,6 +65,11 @@ export function ModulePage({
           label={module.enabled ? t("module.on") : t("module.off")}
         />
       </Card>
+
+      {(() => {
+        const Extra = MODULE_EXTRAS[module.key];
+        return Extra ? <Extra module={module} /> : null;
+      })()}
 
       {module.settings && module.settings.length > 0 && (
         <>

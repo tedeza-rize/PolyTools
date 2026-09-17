@@ -44,6 +44,15 @@ export const ko: Record<string, string> = {
   "cat.files": "파일 관리",
   "cat.advanced": "고급",
 
+  "stat.cpu": "CPU",
+  "stat.memory": "메모리",
+  "stat.gpu": "GPU",
+  "stat.os": "운영 체제",
+  "stat.uptime": "사용 시간",
+  "stat.battery": "배터리",
+  "stat.ac": "전원 연결됨",
+  "stat.onBattery": "배터리 사용 중",
+
   // --- module descriptions ---
   "module.awake.desc": "전원 및 절전 설정을 변경하지 않고 컴퓨터가 잠들지 않게 합니다.",
   "module.always-on-top.desc": "단축키로 창을 다른 모든 창 위에 고정합니다.",
@@ -102,7 +111,9 @@ export const ko: Record<string, string> = {
   "set.screensaver.source.label": "소스",
   "set.screensaver.source.desc": "파일 경로 또는 URL.",
 
-  "set.system-info.hotkey.label": "표시 단축키",
+  "set.system-info.refreshSeconds.label": "새로 고침 간격",
+  "set.system-info.refreshSeconds.desc": "통계 업데이트 간격(초).",
+  "set.color-picker.playSound.label": "복사 시 소리 재생",
 
   "set.grab-and-move.modifier.label": "수식 키",
   "set.window-memory.restoreOnLaunch.label": "실행 시 복원",
