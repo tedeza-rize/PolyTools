@@ -1,5 +1,6 @@
 import { Badge, Card, Switch } from "@fluentui/react-components";
-import { ModuleInfo } from "../types";
+import { ModuleInfo, SettingField } from "../types";
+import { useT } from "../i18n";
 import { ModuleIcon } from "../components/ModuleIcon";
 import { SettingControl } from "../components/SettingControl";
 
@@ -12,7 +13,22 @@ export function ModulePage({
   onToggle: (key: string, enabled: boolean) => void;
   onSetting: (key: string, field: string, value: any) => void;
 }) {
+  const t = useT();
   const disabled = !module.available || !module.enabled;
+
+  // Translate declarative field labels/descriptions/option labels with
+  // fallback to the backend-provided English text.
+  const localize = (f: SettingField): SettingField => ({
+    ...f,
+    label: t(`set.${module.key}.${f.key}.label`, f.label),
+    description: f.description
+      ? t(`set.${module.key}.${f.key}.desc`, f.description)
+      : f.description,
+    options: f.options?.map((o) => ({
+      ...o,
+      label: t(`set.${module.key}.${f.key}.opt.${o.value}`, o.label),
+    })),
+  });
 
   return (
     <div className="content-inner">
@@ -25,27 +41,29 @@ export function ModulePage({
         </span>
         <div className="module-hero-text">
           <div className="module-hero-name">
-            {module.name}{" "}
+            {t(`module.${module.key}.name`, module.name)}{" "}
             {!module.available && (
               <Badge size="medium" color="informative">
-                Coming soon
+                {t("badge.comingSoon")}
               </Badge>
             )}
           </div>
-          <div className="module-hero-desc">{module.description}</div>
+          <div className="module-hero-desc">
+            {t(`module.${module.key}.desc`, module.description)}
+          </div>
         </div>
         <Switch
           checked={module.enabled}
           disabled={!module.available}
           onChange={(_, d) => onToggle(module.key, d.checked)}
-          label={module.enabled ? "On" : "Off"}
+          label={module.enabled ? t("module.on") : t("module.off")}
         />
       </Card>
 
       {module.settings && module.settings.length > 0 && (
         <>
-          <div className="section-label">Settings</div>
-          {module.settings.map((f) => (
+          <div className="section-label">{t("module.settings")}</div>
+          {module.settings.map(localize).map((f) => (
             <Card
               size="small"
               className="setting-card"

@@ -7,6 +7,7 @@ import {
   DismissRegular,
 } from "@fluentui/react-icons";
 import { PolyToolsService } from "../../bindings/polytools/internal/services";
+import { useT } from "../i18n";
 
 export function TitleBar({
   query,
@@ -19,6 +20,7 @@ export function TitleBar({
   maximised: boolean;
   onMaximise: () => void;
 }) {
+  const t = useT();
   return (
     <div className="titlebar">
       <div className="titlebar-brand">
@@ -32,7 +34,7 @@ export function TitleBar({
         <div className="titlebar-search-inner">
           <SearchBox
             size="small"
-            placeholder="Find a utility or setting"
+            placeholder={t("search.placeholder")}
             value={query}
             onChange={(_, d) => onQuery(d.value)}
             style={{ width: "100%" }}
@@ -45,7 +47,7 @@ export function TitleBar({
           className="caption-btn"
           style={{ ["--wails-non-client-region" as any]: "minimize" }}
           onClick={() => PolyToolsService.Minimise()}
-          aria-label="Minimize"
+          aria-label={t("caption.minimize")}
         >
           <SubtractRegular />
         </button>
@@ -53,7 +55,7 @@ export function TitleBar({
           className="caption-btn"
           style={{ ["--wails-non-client-region" as any]: "maximize" }}
           onClick={onMaximise}
-          aria-label={maximised ? "Restore" : "Maximize"}
+          aria-label={maximised ? t("caption.restore") : t("caption.maximize")}
         >
           {maximised ? <SquareMultipleRegular /> : <SquareRegular />}
         </button>
@@ -61,7 +63,7 @@ export function TitleBar({
           className="caption-btn close"
           style={{ ["--wails-non-client-region" as any]: "close" }}
           onClick={() => PolyToolsService.HideWindow()}
-          aria-label="Close"
+          aria-label={t("caption.close")}
         >
           <DismissRegular />
         </button>

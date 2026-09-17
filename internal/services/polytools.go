@@ -67,6 +67,12 @@ func (s *PolyToolsService) SetTheme(theme string) {
 	s.reg.SetGeneral(g)
 }
 
+func (s *PolyToolsService) SetLanguage(lang string) {
+	g := s.reg.General()
+	g.Language = lang
+	s.reg.SetGeneral(g)
+}
+
 // --- window controls for the custom titlebar / tray ---
 
 func (s *PolyToolsService) ShowWindow() {

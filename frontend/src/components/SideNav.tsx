@@ -4,6 +4,7 @@ import {
   SettingsRegular,
 } from "@fluentui/react-icons";
 import { CATEGORY_LABELS, CATEGORY_ORDER, ModuleInfo } from "../types";
+import { useT } from "../i18n";
 import { ModuleIcon } from "./ModuleIcon";
 
 export type Route = "dashboard" | "general" | `module:${string}`;
@@ -17,7 +18,7 @@ function NavItem({
 }: {
   icon: JSX.Element;
   label: string;
-  badge?: boolean;
+  badge?: string;
   selected: boolean;
   onClick: () => void;
 }) {
@@ -30,7 +31,7 @@ function NavItem({
       <span className="nav-item-label">{label}</span>
       {badge && (
         <Badge size="small" appearance="filled" color="informative">
-          Soon
+          {badge}
         </Badge>
       )}
     </button>
@@ -46,17 +47,18 @@ export function SideNav({
   route: Route;
   onNavigate: (r: Route) => void;
 }) {
+  const t = useT();
   return (
     <nav className="sidenav">
       <NavItem
         icon={<HomeRegular />}
-        label="Dashboard"
+        label={t("nav.dashboard")}
         selected={route === "dashboard"}
         onClick={() => onNavigate("dashboard")}
       />
       <NavItem
         icon={<SettingsRegular />}
-        label="General"
+        label={t("nav.general")}
         selected={route === "general"}
         onClick={() => onNavigate("general")}
       />
@@ -66,13 +68,15 @@ export function SideNav({
         if (!items.length) return null;
         return (
           <div className="sidenav-group" key={cat}>
-            <div className="sidenav-group-label">{CATEGORY_LABELS[cat]}</div>
+            <div className="sidenav-group-label">
+              {t(`cat.${cat}`, CATEGORY_LABELS[cat])}
+            </div>
             {items.map((m) => (
               <NavItem
                 key={m.key}
                 icon={<ModuleIcon name={m.icon} />}
-                label={m.name}
-                badge={!m.available}
+                label={t(`module.${m.key}.name`, m.name)}
+                badge={m.available ? undefined : t("badge.soon")}
                 selected={route === `module:${m.key}`}
                 onClick={() => onNavigate(`module:${m.key}`)}
               />

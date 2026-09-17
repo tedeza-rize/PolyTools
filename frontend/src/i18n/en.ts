@@ -1,0 +1,45 @@
+// English UI strings. Module names/descriptions/settings come from the
+// backend catalog (already English), so only chrome strings live here.
+export const en: Record<string, string> = {
+  "nav.dashboard": "Dashboard",
+  "nav.general": "General",
+  "search.placeholder": "Find a utility or setting",
+  "badge.soon": "Soon",
+  "badge.comingSoon": "Coming soon",
+
+  "dash.title": "Dashboard",
+  "dash.subtitle": "Turn utilities on or off. Click a card to configure it.",
+
+  "general.title": "General",
+  "general.subtitle": "App-wide settings.",
+  "general.startup": "Startup",
+  "general.runAtStartup": "Run at startup",
+  "general.runAtStartup.desc": "Start PolyTools automatically when you sign in to Windows.",
+  "general.appearance": "Appearance",
+  "general.theme": "Theme",
+  "general.theme.desc": "Choose the app theme or follow Windows.",
+  "general.theme.system": "System default",
+  "general.theme.light": "Light",
+  "general.theme.dark": "Dark",
+  "general.language": "Language",
+  "general.language.desc": "Choose the app language or follow Windows.",
+  "general.lang.system": "System default",
+  "general.about": "About",
+  "general.about.desc": "Version 0.1.0 — Windows utilities for power users. Built with Go + Wails v3.",
+
+  "module.on": "On",
+  "module.off": "Off",
+  "module.settings": "Settings",
+
+  "caption.minimize": "Minimize",
+  "caption.maximize": "Maximize",
+  "caption.restore": "Restore",
+  "caption.close": "Close",
+
+  "cat.system": "System Tools",
+  "cat.windowing": "Windowing & Layouts",
+  "cat.gaming": "Gaming",
+  "cat.input": "Input / Output",
+  "cat.files": "File Management",
+  "cat.advanced": "Advanced",
+};

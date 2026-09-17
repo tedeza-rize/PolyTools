@@ -12,6 +12,7 @@ import { Dashboard } from "./pages/Dashboard";
 import { General } from "./pages/General";
 import { ModulePage } from "./pages/ModulePage";
 import { General as GeneralSettings, ModuleInfo } from "./types";
+import { I18nProvider, translatorFor } from "./i18n";
 
 function useSystemDark() {
   const [dark, setDark] = useState(
@@ -32,6 +33,7 @@ export default function App() {
   const [general, setGeneral] = useState<GeneralSettings>({
     runAtStartup: false,
     theme: "system",
+    language: "system",
   });
   const [query, setQuery] = useState("");
   const [maximised, setMaximised] = useState(false);
@@ -40,6 +42,8 @@ export default function App() {
   const dark =
     general.theme === "dark" ||
     (general.theme === "system" && systemDark);
+
+  const t = useMemo(() => translatorFor(general.language), [general.language]);
 
   const refresh = useCallback(() => {
     PolyToolsService.Modules()
@@ -59,9 +63,11 @@ export default function App() {
     return modules.filter(
       (m) =>
         m.name.toLowerCase().includes(q) ||
-        m.description.toLowerCase().includes(q)
+        m.description.toLowerCase().includes(q) ||
+        t(`module.${m.key}.name`, m.name).toLowerCase().includes(q) ||
+        t(`module.${m.key}.desc`, m.description).toLowerCase().includes(q)
     );
-  }, [modules, query]);
+  }, [modules, query, t]);
 
   const toggle = useCallback((key: string, enabled: boolean) => {
     PolyToolsService.SetModuleEnabled(key, enabled)
@@ -91,6 +97,7 @@ export default function App() {
       theme={dark ? webDarkTheme : webLightTheme}
       style={{ background: "transparent", height: "100%" }}
     >
+      <I18nProvider value={t}>
       <div className="app-shell">
         <TitleBar
           query={query}
@@ -126,6 +133,11 @@ export default function App() {
                     .then(() => setGeneral((g) => ({ ...g, theme: v })))
                     .catch(console.error);
                 }}
+                onLanguage={(v) => {
+                  PolyToolsService.SetLanguage(v)
+                    .then(() => setGeneral((g) => ({ ...g, language: v })))
+                    .catch(console.error);
+                }}
               />
             )}
             {currentModule && (
@@ -138,6 +150,7 @@ export default function App() {
           </main>
         </div>
       </div>
+      </I18nProvider>
     </FluentProvider>
   );
 }

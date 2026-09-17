@@ -9,7 +9,8 @@ import (
 // General holds app-level (non-module) settings.
 type General struct {
 	RunAtStartup bool   `json:"runAtStartup"`
-	Theme        string `json:"theme"` // system | light | dark
+	Theme        string `json:"theme"`    // system | light | dark
+	Language     string `json:"language"` // system | en | ko
 }
 
 type persistedModule struct {
@@ -40,7 +41,7 @@ func NewStore() (*Store, error) {
 	s := &Store{
 		path: filepath.Join(dir, "settings.json"),
 		data: persistedFile{
-			General: General{Theme: "system"},
+			General: General{Theme: "system", Language: "system"},
 			Modules: map[string]persistedModule{},
 		},
 	}

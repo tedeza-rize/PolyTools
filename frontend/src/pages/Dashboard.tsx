@@ -1,5 +1,6 @@
 import { Badge, Card, Switch, Title2, Text } from "@fluentui/react-components";
 import { ModuleInfo } from "../types";
+import { useT } from "../i18n";
 import { ModuleIcon } from "../components/ModuleIcon";
 
 export function Dashboard({
@@ -11,13 +12,14 @@ export function Dashboard({
   onToggle: (key: string, enabled: boolean) => void;
   onOpen: (key: string) => void;
 }) {
+  const t = useT();
   return (
     <div className="content-inner">
       <Title2 className="page-title" as="h1" block>
-        Dashboard
+        {t("dash.title")}
       </Title2>
       <Text className="page-subtitle" as="p" block>
-        Turn utilities on or off. Click a card to configure it.
+        {t("dash.subtitle")}
       </Text>
 
       <div className="module-grid">
@@ -34,14 +36,16 @@ export function Dashboard({
               </span>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div className="module-card-name">
-                  {m.name}{" "}
+                  {t(`module.${m.key}.name`, m.name)}{" "}
                   {!m.available && (
                     <Badge size="small" color="informative">
-                      Soon
+                      {t("badge.soon")}
                     </Badge>
                   )}
                 </div>
-                <div className="module-card-desc">{m.description}</div>
+                <div className="module-card-desc">
+                  {t(`module.${m.key}.desc`, m.description)}
+                </div>
               </div>
               <Switch
                 checked={m.enabled}
