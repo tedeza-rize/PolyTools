@@ -88,7 +88,7 @@ func main() {
 		app.Event.Emit("modules:changed", key)
 	})
 
-	modules.RegisterAll(reg, app, win)
+	modules.RegisterAll(reg, app, win, tray, svc.ShowWindow)
 	reg.ApplyPersisted()
 	reg.Boot()
 
