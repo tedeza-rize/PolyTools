@@ -4,6 +4,7 @@ package services
 
 import (
 	"polytools/internal/modules"
+	"polytools/internal/win32"
 )
 
 // --- file pickers for settings panels ---
@@ -38,4 +39,22 @@ func (s *PolyToolsService) SaveAutomationRules(rules []modules.AutomationRule) e
 
 func (s *PolyToolsService) DismissScreensaver() {
 	modules.ScreensaverDismiss()
+}
+
+// WinScreensaverInfo describes the built-in Windows screensaver
+// configuration, plus whether PolyTools currently has it suspended.
+type WinScreensaverInfo struct {
+	Active    bool   `json:"active"`
+	Timeout   uint32 `json:"timeout"` // seconds
+	ScrPath   string `json:"scrPath"`
+	Suspended bool   `json:"suspended"`
+}
+
+func (s *PolyToolsService) WindowsScreensaver() WinScreensaverInfo {
+	return WinScreensaverInfo{
+		Active:    win32.ScreensaverActive(),
+		Timeout:   win32.ScreensaverTimeout(),
+		ScrPath:   win32.ScreensaverPath(),
+		Suspended: modules.WinScreensaverSuspended(),
+	}
 }

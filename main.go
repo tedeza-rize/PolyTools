@@ -41,6 +41,11 @@ func main() {
 			},
 			ExitCode: 0,
 		},
+		// Undo the screensaver module's Windows-screensaver takeover so the
+		// user's setting is never left suspended while the app isn't running.
+		OnShutdown: func() {
+			modules.RestoreWinScreensaver()
+		},
 	})
 
 	win := app.Window.NewWithOptions(application.WebviewWindowOptions{

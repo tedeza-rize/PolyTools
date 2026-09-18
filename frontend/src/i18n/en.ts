@@ -35,6 +35,12 @@ export const en: Record<string, string> = {
   "hotkey.press": "Press shortcut…",
   "control.browse": "Browse…",
 
+  "panel.ss.winss": "Windows screensaver",
+  "panel.ss.suspended": "Suspended by PolyTools",
+  "panel.ss.blank": "Blank screen",
+  "panel.ss.everyMin": "{n} min",
+  "panel.ss.off": "Off",
+
   "caption.minimize": "Minimize",
   "caption.maximize": "Maximize",
   "caption.restore": "Restore",

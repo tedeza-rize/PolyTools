@@ -89,6 +89,8 @@ export const ko: Record<string, string> = {
   "set.screensaver.imageFolder.desc": "슬라이드쇼에 사용할 이미지 폴더입니다.",
   "set.screensaver.idleMinutes.label": "시작까지 대기 시간",
   "set.screensaver.idleMinutes.desc": "입력이 없으면 이 시간(분) 후 화면보호기가 시작됩니다.",
+  "set.screensaver.takeover.label": "Windows 화면보호기 대체",
+  "set.screensaver.takeover.desc": "이 모듈이 켜져 있는 동안 Windows 화면보호기를 일시 중지해 둘이 동시에 실행되지 않게 합니다. 모듈을 끄면 원래 설정이 복원됩니다.",
   "set.screensaver.hotkey.label": "지금 미리보기",
 
   "set.borderless-gaming.hotkey.label": "전경 창 테두리 해제",
@@ -122,4 +124,9 @@ export const ko: Record<string, string> = {
   "panel.auto.addStep": "단계 추가",
   "panel.auto.addRule": "규칙 추가",
 
+  "panel.ss.winss": "Windows 화면보호기",
+  "panel.ss.suspended": "PolyTools에 의해 일시 중지됨",
+  "panel.ss.blank": "빈 화면",
+  "panel.ss.everyMin": "{n}분",
+  "panel.ss.off": "끔",
 };

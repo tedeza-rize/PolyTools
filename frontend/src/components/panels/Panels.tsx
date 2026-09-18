@@ -12,6 +12,9 @@ import { PolyToolsService } from "../../../bindings/polytools/internal/services"
 import type {
   AutomationRule,
 } from "../../../bindings/polytools/internal/modules/models";
+import type {
+  WinScreensaverInfo,
+} from "../../../bindings/polytools/internal/services/models";
 import { ModuleInfo } from "../../types";
 import { useT } from "../../i18n";
 
@@ -181,3 +184,45 @@ export function AutomationsPanel(_props: PanelProps) {
   );
 }
 
+// --- Windows screensaver status ---
+
+export function ScreensaverPanel({ module }: PanelProps) {
+  const t = useT();
+  const [info, setInfo] = useState<WinScreensaverInfo | null>(null);
+
+  useEffect(() => {
+    PolyToolsService.WindowsScreensaver()
+      .then(setInfo)
+      .catch(console.error);
+    // Re-fetch when the module is toggled — takeover suspends/restores
+    // the Windows screensaver as a side effect.
+  }, [module.enabled]);
+
+  let status = "";
+  if (info) {
+    if (info.suspended) {
+      status = t("panel.ss.suspended", "Suspended by PolyTools");
+    } else if (info.active) {
+      const name = info.scrPath
+        ? info.scrPath.split(/[\\/]/).pop()
+        : t("panel.ss.blank", "Blank screen");
+      const mins = Math.round(info.timeout / 60);
+      status = `${name} — ${t("panel.ss.everyMin", "{n} min").replace("{n}", String(mins))}`;
+    } else {
+      status = t("panel.ss.off", "Off");
+    }
+  }
+
+  return (
+    <Card className="setting-group" size="small">
+      <div className="setting-row">
+        <div className="setting-text">
+          <div className="setting-label">
+            {t("panel.ss.winss", "Windows screensaver")}
+          </div>
+          <div className="setting-desc">{status || "…"}</div>
+        </div>
+      </div>
+    </Card>
+  );
+}
