@@ -46,6 +46,7 @@ func newScreensaver(app *application.App) *core.BaseModule {
 	var (
 		mu      sync.Mutex
 		saver   *application.WebviewWindow
+		shownAt time.Time
 		stopCh  chan struct{}
 	)
 
@@ -74,6 +75,7 @@ func newScreensaver(app *application.App) *core.BaseModule {
 		})
 		mu.Lock()
 		saver = w
+		shownAt = time.Now()
 		mu.Unlock()
 		log.Printf("[screensaver] shown")
 	}
@@ -111,9 +113,12 @@ func newScreensaver(app *application.App) *core.BaseModule {
 			idle := win32.IdleSeconds()
 			mu.Lock()
 			shown := saver != nil
+			up := time.Since(shownAt)
 			mu.Unlock()
-			if shown && idle < 2 {
-				// input resumed → dismiss
+			// Dismiss on input only after a short grace period — the
+			// preview hotkey press itself resets the idle counter, which
+			// would otherwise kill the window on the next tick.
+			if shown && idle < 2 && up > 3*time.Second {
 				dismiss()
 			} else if !shown && threshold > 0 && idle >= threshold {
 				show()
