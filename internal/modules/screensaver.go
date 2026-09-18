@@ -24,6 +24,15 @@ import (
 // (clearing the shown flag, not just the window handle).
 var screensaverDismiss func()
 
+// sourceKeys maps each content type to the setting key holding its source.
+// "source" is the legacy single key — kept as a hidden field so older
+// configs still resolve.
+var sourceKeys = map[string]string{
+	"video":  "videoFile",
+	"web":    "webUrl",
+	"images": "imageFolder",
+}
+
 func newScreensaver(app *application.App) *core.BaseModule {
 	m := core.NewModule(core.Info{
 		Key:         "screensaver",
@@ -39,7 +48,24 @@ func newScreensaver(app *application.App) *core.BaseModule {
 					{Value: "video", Label: "Video"}, {Value: "web", Label: "Web page"}, {Value: "images", Label: "Image slideshow"},
 				},
 			},
-			{Key: "source", Label: "Source", Description: "File path or URL. For slideshows: a folder path.", Type: core.SettingText, Value: ""},
+			{
+				Key: "webUrl", Label: "URL", Type: core.SettingText, Value: "",
+				Description: "Web page to display.",
+				ShowIf:      &core.ShowIf{Key: "contentType", Equals: "web"},
+			},
+			{
+				Key: "videoFile", Label: "Video file", Type: core.SettingFile, Value: "",
+				Description: "Video to loop.",
+				ShowIf:      &core.ShowIf{Key: "contentType", Equals: "video"},
+			},
+			{
+				Key: "imageFolder", Label: "Image folder", Type: core.SettingFolder, Value: "",
+				Description: "Folder of images for the slideshow.",
+				ShowIf:      &core.ShowIf{Key: "contentType", Equals: "images"},
+			},
+			// Legacy storage key — superseded by the per-type keys above
+			// but still read as a fallback for older configurations.
+			{Key: "source", Type: core.SettingText, Value: "", Hidden: true},
 			{Key: "idleMinutes", Label: "Start after idle", Type: core.SettingSlider, Value: 5.0, Min: f64(1), Max: f64(60), Step: f64(1)},
 			{Key: "hotkey", Label: "Preview now", Type: core.SettingShortcut, Value: "ctrl+alt+shift+s"},
 		},
@@ -52,6 +78,14 @@ func newScreensaver(app *application.App) *core.BaseModule {
 		stopCh  chan struct{}
 	)
 
+	source := func() string {
+		s := m.SettingString(sourceKeys[m.SettingString("contentType")])
+		if s == "" {
+			s = m.SettingString("source")
+		}
+		return s
+	}
+
 	show := func() {
 		mu.Lock()
 		if saver != nil {
@@ -59,17 +93,18 @@ func newScreensaver(app *application.App) *core.BaseModule {
 			return
 		}
 		mu.Unlock()
+		contentType := m.SettingString("contentType")
+		src := source()
 		q := url.Values{}
-		q.Set("type", m.SettingString("contentType"))
-		q.Set("src", m.SettingString("source"))
+		q.Set("type", contentType)
+		q.Set("src", src)
 		target := "/?page=screensaver&" + q.Encode()
 		// Web content opens as a top-level navigation, not an iframe —
 		// sites with CSP frame-ancestors / X-Frame-Options refuse to load
 		// inside an embedded frame.
-		if m.SettingString("contentType") == "web" {
-			if u := m.SettingString("source"); strings.HasPrefix(u, "http://") || strings.HasPrefix(u, "https://") {
-				target = u
-			}
+		if contentType == "web" &&
+			(strings.HasPrefix(src, "http://") || strings.HasPrefix(src, "https://")) {
+			target = src
 		}
 		opts := application.WebviewWindowOptions{
 			Title:       "PolyTools Screensaver",

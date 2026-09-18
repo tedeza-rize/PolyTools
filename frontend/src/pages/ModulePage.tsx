@@ -4,15 +4,11 @@ import { CATEGORY_LABELS, ModuleInfo, SettingField } from "../types";
 import { useT } from "../i18n";
 import { ModuleIcon, moduleColor } from "../components/ModuleIcon";
 import { SettingControl } from "../components/SettingControl";
-import {
-  AutomationsPanel,
-  ScreensaverPanel,
-} from "../components/panels/Panels";
+import { AutomationsPanel } from "../components/panels/Panels";
 
 // Per-module rich content rendered between the hero card and the settings list.
 const MODULE_EXTRAS: Record<string, React.ComponentType<{ module: ModuleInfo }>> = {
   "automations": AutomationsPanel,
-  "screensaver": ScreensaverPanel,
 };
 
 export function ModulePage({

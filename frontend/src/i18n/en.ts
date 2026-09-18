@@ -33,6 +33,7 @@ export const en: Record<string, string> = {
   "module.off": "Off",
   "module.settings": "Settings",
   "hotkey.press": "Press shortcut…",
+  "control.browse": "Browse…",
 
   "caption.minimize": "Minimize",
   "caption.maximize": "Maximize",

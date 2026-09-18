@@ -33,6 +33,7 @@ export const ko: Record<string, string> = {
   "module.off": "꺼짐",
   "module.settings": "설정",
   "hotkey.press": "단축키를 누르세요…",
+  "control.browse": "찾아보기…",
 
   "caption.minimize": "최소화",
   "caption.maximize": "최대화",
@@ -80,8 +81,15 @@ export const ko: Record<string, string> = {
   "set.screensaver.contentType.opt.video": "영상",
   "set.screensaver.contentType.opt.web": "웹페이지",
   "set.screensaver.contentType.opt.images": "이미지 슬라이드쇼",
-  "set.screensaver.source.label": "소스",
-  "set.screensaver.source.desc": "파일 경로 또는 URL.",
+  "set.screensaver.webUrl.label": "URL",
+  "set.screensaver.webUrl.desc": "표시할 웹페이지 주소입니다.",
+  "set.screensaver.videoFile.label": "영상 파일",
+  "set.screensaver.videoFile.desc": "반복 재생할 영상입니다.",
+  "set.screensaver.imageFolder.label": "이미지 폴더",
+  "set.screensaver.imageFolder.desc": "슬라이드쇼에 사용할 이미지 폴더입니다.",
+  "set.screensaver.idleMinutes.label": "시작까지 대기 시간",
+  "set.screensaver.idleMinutes.desc": "입력이 없으면 이 시간(분) 후 화면보호기가 시작됩니다.",
+  "set.screensaver.hotkey.label": "지금 미리보기",
 
   "set.borderless-gaming.hotkey.label": "전경 창 테두리 해제",
   "set.borderless-gaming.autoApply.label": "자동 적용",
@@ -114,9 +122,4 @@ export const ko: Record<string, string> = {
   "panel.auto.addStep": "단계 추가",
   "panel.auto.addRule": "규칙 추가",
 
-  "panel.ss.current": "현재 소스",
-  "panel.ss.none": "선택되지 않음",
-  "panel.ss.pick": "소스 선택",
-  "panel.ss.pickFile": "파일 선택…",
-  "panel.ss.pickFolder": "폴더 선택…",
 };
