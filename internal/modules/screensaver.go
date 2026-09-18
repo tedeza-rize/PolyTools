@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
+	"github.com/wailsapp/wails/v3/pkg/events"
 	"polytools/internal/core"
 	"polytools/internal/win32"
 )
@@ -58,7 +59,6 @@ func newScreensaver(app *application.App) *core.BaseModule {
 			return
 		}
 		mu.Unlock()
-		mr := win32.MonitorRect(win32.ForegroundWindow())
 		q := url.Values{}
 		q.Set("type", m.SettingString("contentType"))
 		q.Set("src", m.SettingString("source"))
@@ -71,17 +71,40 @@ func newScreensaver(app *application.App) *core.BaseModule {
 				target = u
 			}
 		}
-		w := app.Window.NewWithOptions(application.WebviewWindowOptions{
-			Title:     "PolyTools Screensaver",
-			Frameless: true,
-			URL:       target,
-			X:         int(mr.Left),
-			Y:         int(mr.Top),
-			Width:     int(mr.Width()),
-			Height:    int(mr.Height()),
+		opts := application.WebviewWindowOptions{
+			Title:       "PolyTools Screensaver",
+			Frameless:   true,
+			AlwaysOnTop: true,
+			URL:         target,
 			Windows: application.WindowsWindow{
-				BackdropType: application.None,
+				BackdropType:    application.None,
+				HiddenOnTaskbar: true,
 			},
+		}
+		// Cover the monitor holding the foreground window. Window options
+		// take DIP coordinates while MonitorRect reports physical pixels,
+		// so look up the matching screen and use its (already-DIP) bounds.
+		mr := win32.MonitorRect(win32.ForegroundWindow())
+		if screen := app.Screen.ScreenNearestPhysicalPoint(application.Point{
+			X: int(mr.Left + mr.Width()/2),
+			Y: int(mr.Top + mr.Height()/2),
+		}); screen != nil {
+			opts.X, opts.Y = screen.Bounds.X, screen.Bounds.Y
+			opts.Width, opts.Height = screen.Bounds.Width, screen.Bounds.Height
+		} else {
+			opts.X, opts.Y = int(mr.Left), int(mr.Top)
+			opts.Width, opts.Height = int(mr.Width()), int(mr.Height())
+		}
+		w := app.Window.NewWithOptions(opts)
+		// If the window is closed by anything other than dismiss() (user,
+		// OS, crash), clear the handle so the module doesn't stay stuck in
+		// the "shown" state forever.
+		w.OnWindowEvent(events.Common.WindowClosing, func(*application.WindowEvent) {
+			mu.Lock()
+			if saver == w {
+				saver = nil
+			}
+			mu.Unlock()
 		})
 		mu.Lock()
 		saver = w
