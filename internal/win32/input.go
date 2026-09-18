@@ -39,12 +39,12 @@ type keybdInput struct {
 }
 
 // input mirrors the Win32 INPUT struct (keyboard variant — the union is
-// sized for MOUSEINPUT, the largest member).
+// sized for MOUSEINPUT, the largest member: 32 bytes on x64).
 type input struct {
 	Type uint32
 	_    uint32 // padding for 64-bit alignment of the union
 	Ki   keybdInput
-	_    [16]byte // union tail padding (mouse/hw members)
+	_    [8]byte // union tail padding: 32 (MOUSEINPUT) - 24 (KEYBDINPUT)
 }
 
 func sendInputs(in []input) {
