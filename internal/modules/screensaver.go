@@ -76,6 +76,7 @@ func newScreensaver(app *application.App) *core.BaseModule {
 		saver   *application.WebviewWindow
 		shownAt time.Time
 		stopCh  chan struct{}
+		running bool
 	)
 
 	source := func() string {
@@ -195,6 +196,17 @@ func newScreensaver(app *application.App) *core.BaseModule {
 	}
 
 	return m.WithHandlers(func() error {
+		// SetEnabled calls handlers unconditionally — a duplicate enable
+		// (e.g. two clients toggling at once) must not start a second
+		// watcher, and a duplicate disable must not close an already
+		// closed channel.
+		mu.Lock()
+		if running {
+			mu.Unlock()
+			return nil
+		}
+		running = true
+		mu.Unlock()
 		// The preview hotkey is auxiliary — if the combo is taken by
 		// another app, still enable the idle watcher.
 		if err := hk.register(); err != nil {
@@ -204,6 +216,13 @@ func newScreensaver(app *application.App) *core.BaseModule {
 		go watch()
 		return nil
 	}, func() error {
+		mu.Lock()
+		if !running {
+			mu.Unlock()
+			return nil
+		}
+		running = false
+		mu.Unlock()
 		close(stopCh)
 		dismiss()
 		return hk.unregister()
