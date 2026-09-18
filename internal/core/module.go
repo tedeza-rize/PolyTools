@@ -41,11 +41,22 @@ const (
 	SettingSelect   SettingType = "select"
 	SettingText     SettingType = "text"
 	SettingTextarea SettingType = "textarea"
+	// SettingFile/SettingFolder render a text input with a browse button.
+	SettingFile   SettingType = "file"
+	SettingFolder SettingType = "folder"
 )
 
 type SelectOption struct {
 	Value string `json:"value"`
 	Label string `json:"label"`
+}
+
+// ShowIf gates a field's visibility on another setting's value — e.g. only
+// show "URL" when contentType == "web". Evaluated in the UI only; the value
+// is still persisted and readable regardless of visibility.
+type ShowIf struct {
+	Key    string `json:"key"`
+	Equals string `json:"equals"`
 }
 
 // SettingField is a declarative description of one module setting.
@@ -59,6 +70,10 @@ type SettingField struct {
 	Min         *float64       `json:"min,omitempty"`
 	Max         *float64       `json:"max,omitempty"`
 	Step        *float64       `json:"step,omitempty"`
+	ShowIf      *ShowIf        `json:"showIf,omitempty"`
+	// Hidden fields keep a value in the persisted settings without
+	// rendering a control — used to keep reading legacy keys.
+	Hidden bool `json:"hidden,omitempty"`
 }
 
 // Info is the module metadata consumed by the settings UI.

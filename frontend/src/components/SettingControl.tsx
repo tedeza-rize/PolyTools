@@ -9,6 +9,7 @@ import {
   Textarea,
 } from "@fluentui/react-components";
 import { SettingField, SettingType } from "../types";
+import { PolyToolsService } from "../../bindings/polytools/internal/services";
 import { useT } from "../i18n";
 
 const MODIFIER_LABELS: Record<string, string> = {
@@ -118,6 +119,7 @@ export function SettingControl({
   disabled?: boolean;
   onChange: (value: any) => void;
 }) {
+  const t = useT();
   switch (field.type) {
     case SettingType.SettingToggle:
       return (
@@ -180,6 +182,35 @@ export function SettingControl({
           style={{ minWidth: 340 }}
         />
       );
+    case SettingType.SettingFile:
+    case SettingType.SettingFolder: {
+      const pick = async () => {
+        const fn =
+          field.type === SettingType.SettingFile
+            ? PolyToolsService.PickFile
+            : PolyToolsService.PickFolder;
+        try {
+          const p = await fn(field.label);
+          if (p) onChange(p);
+        } catch (e) {
+          console.error(e);
+        }
+      };
+      return (
+        <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+          <Input
+            size="small"
+            disabled={disabled}
+            value={String(field.value ?? "")}
+            onChange={(_, d) => onChange(d.value)}
+            style={{ minWidth: 200 }}
+          />
+          <Button size="small" disabled={disabled} onClick={pick}>
+            {t("control.browse", "Browse…")}
+          </Button>
+        </div>
+      );
+    }
     case SettingType.SettingText:
     default:
       return (

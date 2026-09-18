@@ -42,7 +42,17 @@ export function ModulePage({
     })),
   });
 
-  const settings = (module.settings ?? []).map(localize);
+  const values = new Map(
+    (module.settings ?? []).map((f) => [f.key, f.value])
+  );
+  // Drop hidden fields (legacy storage keys) and fields whose showIf
+  // condition doesn't match the current value of its dependency.
+  const settings = (module.settings ?? [])
+    .filter((f) => !f.hidden)
+    .filter(
+      (f) => !f.showIf || String(values.get(f.showIf.key)) === f.showIf.equals
+    )
+    .map(localize);
 
   return (
     <div className="content-inner">
