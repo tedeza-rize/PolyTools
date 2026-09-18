@@ -4,21 +4,13 @@ import { CATEGORY_LABELS, ModuleInfo, SettingField } from "../types";
 import { useT } from "../i18n";
 import { ModuleIcon, moduleColor } from "../components/ModuleIcon";
 import { SettingControl } from "../components/SettingControl";
-import { SystemInfoPanel } from "../components/SystemInfoPanel";
 import {
   AutomationsPanel,
-  BatchRenamePanel,
-  EnvVarsPanel,
-  HostsPanel,
   ScreensaverPanel,
 } from "../components/panels/Panels";
 
 // Per-module rich content rendered between the hero card and the settings list.
 const MODULE_EXTRAS: Record<string, React.ComponentType<{ module: ModuleInfo }>> = {
-  "system-info": SystemInfoPanel,
-  "batch-rename": BatchRenamePanel,
-  "env-vars": EnvVarsPanel,
-  "hosts-editor": HostsPanel,
   "automations": AutomationsPanel,
   "screensaver": ScreensaverPanel,
 };

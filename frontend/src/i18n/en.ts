@@ -45,13 +45,4 @@ export const en: Record<string, string> = {
   "cat.input": "Input / Output",
   "cat.files": "File Management",
   "cat.advanced": "Advanced",
-
-  "stat.cpu": "CPU",
-  "stat.memory": "Memory",
-  "stat.gpu": "GPU",
-  "stat.os": "Operating system",
-  "stat.uptime": "Uptime",
-  "stat.battery": "Battery",
-  "stat.ac": "Plugged in",
-  "stat.onBattery": "On battery",
 };

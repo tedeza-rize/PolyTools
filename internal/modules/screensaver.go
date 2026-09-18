@@ -138,8 +138,7 @@ func newScreensaver(app *application.App) *core.BaseModule {
 	})
 }
 
-// helper for service: currently-showing flag
-func ScreensaverShowing() bool { return ScreensaverWindow != nil }
+// ScreensaverDismiss closes the screensaver window (called from the service).
 func ScreensaverDismiss() {
 	if ScreensaverWindow != nil {
 		ScreensaverWindow.Close()

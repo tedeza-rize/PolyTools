@@ -7,22 +7,15 @@ import (
 )
 
 var (
-	procSendInput         = user32.NewProc("SendInput")
-	procGetAsyncKeyState  = user32.NewProc("GetAsyncKeyState")
-	procGetKeyState       = user32.NewProc("GetKeyState")
-	procGetLastInputInfo  = user32.NewProc("GetLastInputInfo")
-	procToUnicode         = user32.NewProc("ToUnicode")
-	procGetKeyboardLayout = user32.NewProc("GetKeyboardLayout")
-	procMapVirtualKey     = user32.NewProc("MapVirtualKeyW")
+	procSendInput        = user32.NewProc("SendInput")
+	procGetLastInputInfo = user32.NewProc("GetLastInputInfo")
 )
 
 const (
 	inputKeyboard = 1
 
-	keyEventFExtendedKey = 0x0001
-	keyEventFKeyUp       = 0x0002
-	keyEventFUnicode     = 0x0004
-	keyEventFScancode    = 0x0008
+	keyEventFKeyUp   = 0x0002
+	keyEventFUnicode = 0x0004
 
 	vkBack    = 0x08
 	vkTab     = 0x09
@@ -62,21 +55,6 @@ func sendInputs(in []input) {
 	)
 }
 
-// KeyPress sends a virtual-key press+release.
-func KeyPress(vk uint16) {
-	down := input{Type: inputKeyboard, Ki: keybdInput{Vk: vk}}
-	up := input{Type: inputKeyboard, Ki: keybdInput{Vk: vk, Flags: keyEventFKeyUp}}
-	sendInputs([]input{down, up})
-}
-
-// KeyDown / KeyUp send only one half of a key event (for chord injection).
-func KeyDown(vk uint16) {
-	sendInputs([]input{{Type: inputKeyboard, Ki: keybdInput{Vk: vk}}})
-}
-func KeyUp(vk uint16) {
-	sendInputs([]input{{Type: inputKeyboard, Ki: keybdInput{Vk: vk, Flags: keyEventFKeyUp}}})
-}
-
 // SendKeys presses the given virtual keys together (e.g. Ctrl+V).
 func SendKeys(vks ...uint16) {
 	in := make([]input, 0, len(vks)*2)
@@ -85,18 +63,6 @@ func SendKeys(vks ...uint16) {
 	}
 	for i := len(vks) - 1; i >= 0; i-- {
 		in = append(in, input{Type: inputKeyboard, Ki: keybdInput{Vk: vks[i], Flags: keyEventFKeyUp}})
-	}
-	sendInputs(in)
-}
-
-// SendBackspaces erases n characters before the caret.
-func SendBackspaces(n int) {
-	in := make([]input, 0, n*2)
-	for i := 0; i < n; i++ {
-		in = append(in,
-			input{Type: inputKeyboard, Ki: keybdInput{Vk: vkBack}},
-			input{Type: inputKeyboard, Ki: keybdInput{Vk: vkBack, Flags: keyEventFKeyUp}},
-		)
 	}
 	sendInputs(in)
 }
@@ -126,27 +92,6 @@ func utf16Of(r rune) []uint16 {
 	return []uint16{uint16(0xD800 + r>>10), uint16(0xDC00 + r&0x3FF)}
 }
 
-// KeyDownState reports whether the virtual key is currently held.
-func KeyDownState(vk uint16) bool {
-	r, _, _ := procGetAsyncKeyState.Call(uintptr(vk))
-	return r&0x8000 != 0
-}
-
-// ModifierHeld reports whether the named modifier group is held.
-func ModifierHeld(name string) bool {
-	switch name {
-	case "alt":
-		return KeyDownState(vkMenu)
-	case "ctrl":
-		return KeyDownState(vkControl)
-	case "shift":
-		return KeyDownState(vkShift)
-	case "win":
-		return KeyDownState(vkLWin) || KeyDownState(vkRWin)
-	}
-	return false
-}
-
 type lastInputInfo struct {
 	CbSize uint32
 	DwTime uint32
@@ -161,23 +106,8 @@ func IdleSeconds() uint32 {
 	return uint32((uint64(tick) - uint64(lii.DwTime)) / 1000)
 }
 
-// VKToChar translates a key press to a rune using the caller-maintained
-// keyboard state array (ToUnicode). Returns 0 for non-character keys.
-func VKToChar(vk, scan uint16, state *[256]byte) rune {
-	var out [8]uint16
-	n, _, _ := procToUnicode.Call(
-		uintptr(vk), uintptr(scan),
-		uintptr(unsafe.Pointer(state)),
-		uintptr(unsafe.Pointer(&out[0])), 8, 0,
-	)
-	if n <= 0 {
-		return 0
-	}
-	return rune(out[0])
-}
-
-// VKFromName maps friendly key names to virtual-key codes (for remapping
-// tables like "CapsLock = Escape").
+// VKByName maps friendly key names to virtual-key codes (for automation
+// "keys" steps like "ctrl+v").
 var VKByName = map[string]uint16{
 	"backspace": vkBack, "tab": vkTab, "enter": vkReturn, "return": vkReturn,
 	"shift": vkShift, "ctrl": vkControl, "control": vkControl, "alt": vkMenu,
@@ -198,17 +128,4 @@ var VKByName = map[string]uint16{
 	"y": 0x59, "z": 0x5A,
 	";": 0xBA, "=": 0xBB, ",": 0xBC, "-": 0xBD, ".": 0xBE, "/": 0xBF,
 	"`": 0xC0, "[": 0xDB, "\\": 0xDC, "]": 0xDD, "'": 0xDE,
-}
-
-// VKName is the inverse of VKByName for display.
-func VKName(vk uint16) string {
-	for name, v := range VKByName {
-		if v == vk && len(name) > 1 {
-			return name
-		}
-	}
-	if vk >= 0x30 && vk <= 0x39 || vk >= 0x41 && vk <= 0x5A {
-		return string(rune(vk))
-	}
-	return ""
 }

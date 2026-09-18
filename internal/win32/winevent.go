@@ -11,9 +11,14 @@ import (
 )
 
 var (
-	procSetWinEventHook   = user32.NewProc("SetWinEventHook")
-	procUnhookWinEvent    = user32.NewProc("UnhookWinEvent")
+	procSetWinEventHook    = user32.NewProc("SetWinEventHook")
+	procUnhookWinEvent     = user32.NewProc("UnhookWinEvent")
+	procGetMessage         = user32.NewProc("GetMessageW")
+	procPostThreadMessage  = user32.NewProc("PostThreadMessageW")
+	procGetCurrentThreadId = kernel32.NewProc("GetCurrentThreadId")
 )
+
+const wmQuit = 0x0012
 
 const (
 	eventObjectCreate    = 0x8000

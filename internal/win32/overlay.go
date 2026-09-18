@@ -23,14 +23,16 @@ type Overlay struct {
 }
 
 var (
-	procRegisterClassEx  = user32.NewProc("RegisterClassExW")
-	procCreateWindowEx   = user32.NewProc("CreateWindowExW")
-	procDefWindowProc    = user32.NewProc("DefWindowProcW")
-	procUpdateLayered    = user32.NewProc("UpdateLayeredWindow")
-	procDestroyWindow    = user32.NewProc("DestroyWindow")
-	procCreateDIBSection = gdi32.NewProc("CreateDIBSection")
-	procInvalidateRect   = user32.NewProc("InvalidateRect")
-	procSetWindowPosOvl  = user32.NewProc("SetWindowPos")
+	procRegisterClassEx      = user32.NewProc("RegisterClassExW")
+	procCreateWindowEx       = user32.NewProc("CreateWindowExW")
+	procDefWindowProc        = user32.NewProc("DefWindowProcW")
+	procUpdateLayered        = user32.NewProc("UpdateLayeredWindow")
+	procDestroyWindow        = user32.NewProc("DestroyWindow")
+	procCreateDIBSection     = gdi32.NewProc("CreateDIBSection")
+	procCreateCompatibleDC   = gdi32.NewProc("CreateCompatibleDC")
+	procSelectObject         = gdi32.NewProc("SelectObject")
+	procDeleteDC             = gdi32.NewProc("DeleteDC")
+	procDeleteObject         = gdi32.NewProc("DeleteObject")
 )
 
 const (
@@ -43,7 +45,23 @@ const (
 	ulwAlpha = 0x00000002
 
 	hwndTopMostV = ^uintptr(0) // -1
+
+	dibRGBColors = 0
 )
+
+type bitmapInfoHeader struct {
+	Size          uint32
+	Width         int32
+	Height        int32
+	Planes        uint16
+	BitCount      uint16
+	Compression   uint32
+	SizeImage     uint32
+	XPelsPerMeter int32
+	YPelsPerMeter int32
+	ClrUsed       uint32
+	ClrImportant  uint32
+}
 
 type wndClassEx struct {
 	CbSize        uint32
@@ -130,9 +148,6 @@ func NewOverlay(x, y, w, h int32) (*Overlay, error) {
 	}, nil
 }
 
-// Pixels returns the BGRA buffer (premultiplied alpha expected).
-func (o *Overlay) Pixels() []byte { return o.pix }
-
 // Present pushes the buffer to the screen and shows the window.
 func (o *Overlay) Present() {
 	o.mu.Lock()
@@ -157,22 +172,6 @@ func (o *Overlay) Present() {
 func (o *Overlay) Fill(b, g, r, a uint8) {
 	for i := 0; i < len(o.pix); i += 4 {
 		o.pix[i], o.pix[i+1], o.pix[i+2], o.pix[i+3] = b, g, r, a
-	}
-}
-
-// ClearRectAlpha zeroes alpha inside the rectangle (punch-through).
-func (o *Overlay) ClearRectAlpha(x, y, w, h int32) {
-	for yy := y; yy < y+h; yy++ {
-		if yy < 0 || yy >= o.h {
-			continue
-		}
-		for xx := x; xx < x+w; xx++ {
-			if xx < 0 || xx >= o.w {
-				continue
-			}
-			i := (yy*o.w + xx) * 4
-			o.pix[i], o.pix[i+1], o.pix[i+2], o.pix[i+3] = 0, 0, 0, 0
-		}
 	}
 }
 
@@ -216,50 +215,11 @@ func (o *Overlay) FillRect(x, y, w, h int32, b, g, r, a uint8) {
 	}
 }
 
-// BorderRect paints a rect outline of given thickness.
-func (o *Overlay) BorderRect(x, y, w, h, t int32, b, g, r, a uint8) {
-	o.FillRect(x, y, w, t, b, g, r, a)
-	o.FillRect(x, y+h-t, w, t, b, g, r, a)
-	o.FillRect(x, y+t, t, h-2*t, b, g, r, a)
-	o.FillRect(x+w-t, y+t, t, h-2*t, b, g, r, a)
-}
-
-// CircleHole clears a circular region (for spotlight effects).
-func (o *Overlay) CircleHole(cx, cy, radius int32) {
-	for yy := cy - radius; yy <= cy+radius; yy++ {
-		for xx := cx - radius; xx <= cx+radius; xx++ {
-			dx, dy := xx-cx, yy-cy
-			if dx*dx+dy*dy <= radius*radius &&
-				xx >= 0 && xx < o.w && yy >= 0 && yy < o.h {
-				i := (yy*o.w + xx) * 4
-				o.pix[i+3] = 0
-			}
-		}
-	}
-}
-
-// Hide removes the window from the screen (keeps resources).
-func (o *Overlay) Hide() {
-	procShowWindow.Call(o.hwnd, swHide)
-}
-
-// Show makes it visible without activating.
-func (o *Overlay) Show() {
-	procShowWindow.Call(o.hwnd, swShowNA)
-}
-
-// Move repositions the overlay.
-func (o *Overlay) Move(x, y int32) {
-	procSetWindowPosOvl.Call(o.hwnd, 0,
-		uintptr(x), uintptr(y), 0, 0,
-		swpNoSize|swpNoZOrder|swpNoActivate)
-}
-
 var (
-	procCreateFont  = gdi32.NewProc("CreateFontW")
-	procTextOut     = gdi32.NewProc("TextOutW")
+	procCreateFont   = gdi32.NewProc("CreateFontW")
+	procTextOut      = gdi32.NewProc("TextOutW")
 	procSetTextColor = gdi32.NewProc("SetTextColor")
-	procSetBkMode   = gdi32.NewProc("SetBkMode")
+	procSetBkMode    = gdi32.NewProc("SetBkMode")
 )
 
 // Text draws white text at (x,y) with the given pixel height using GDI.

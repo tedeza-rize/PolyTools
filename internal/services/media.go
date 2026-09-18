@@ -13,7 +13,7 @@ import (
 	"sync"
 )
 
-// Local media server for the screensaver/peek pages: WebView2 can block
+// Local media server for the screensaver page: WebView2 can block
 // file:// subresources when the app is served from a custom scheme, so we
 // serve allow-listed paths over loopback HTTP instead.
 
