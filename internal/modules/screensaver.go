@@ -17,7 +17,10 @@ import (
 // window rendering the configured content (video / web page / slideshow).
 // Any input dismisses it. ---
 
-var ScreensaverWindow *application.WebviewWindow // shown flag for service
+// screensaverDismiss is wired to the module's dismiss closure so the
+// service can close the window through the module's own bookkeeping
+// (clearing the shown flag, not just the window handle).
+var screensaverDismiss func()
 
 func newScreensaver(app *application.App) *core.BaseModule {
 	m := core.NewModule(core.Info{
@@ -36,7 +39,7 @@ func newScreensaver(app *application.App) *core.BaseModule {
 			},
 			{Key: "source", Label: "Source", Description: "File path or URL. For slideshows: a folder path.", Type: core.SettingText, Value: ""},
 			{Key: "idleMinutes", Label: "Start after idle", Type: core.SettingSlider, Value: 5.0, Min: f64(1), Max: f64(60), Step: f64(1)},
-			{Key: "hotkey", Label: "Preview now", Type: core.SettingShortcut, Value: "super+shift+s"},
+			{Key: "hotkey", Label: "Preview now", Type: core.SettingShortcut, Value: "ctrl+alt+shift+s"},
 		},
 	})
 
@@ -71,7 +74,6 @@ func newScreensaver(app *application.App) *core.BaseModule {
 		})
 		mu.Lock()
 		saver = w
-		ScreensaverWindow = w
 		mu.Unlock()
 		log.Printf("[screensaver] shown")
 	}
@@ -80,12 +82,12 @@ func newScreensaver(app *application.App) *core.BaseModule {
 		mu.Lock()
 		w := saver
 		saver = nil
-		ScreensaverWindow = nil
 		mu.Unlock()
 		if w != nil {
 			w.Close()
 		}
 	}
+	screensaverDismiss = dismiss
 
 	hk := newHotkeyCtl(app, func() string { return m.SettingString("hotkey") }, func() {
 		mu.Lock()
@@ -120,8 +122,10 @@ func newScreensaver(app *application.App) *core.BaseModule {
 	}
 
 	return m.WithHandlers(func() error {
+		// The preview hotkey is auxiliary — if the combo is taken by
+		// another app, still enable the idle watcher.
 		if err := hk.register(); err != nil {
-			return err
+			log.Printf("[screensaver] preview hotkey not registered: %v", err)
 		}
 		stopCh = make(chan struct{})
 		go watch()
@@ -140,8 +144,7 @@ func newScreensaver(app *application.App) *core.BaseModule {
 
 // ScreensaverDismiss closes the screensaver window (called from the service).
 func ScreensaverDismiss() {
-	if ScreensaverWindow != nil {
-		ScreensaverWindow.Close()
-		ScreensaverWindow = nil
+	if screensaverDismiss != nil {
+		screensaverDismiss()
 	}
 }
