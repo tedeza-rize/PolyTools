@@ -5,6 +5,7 @@ package modules
 import (
 	"log"
 	"net/url"
+	"strings"
 	"sync"
 	"time"
 
@@ -61,10 +62,19 @@ func newScreensaver(app *application.App) *core.BaseModule {
 		q := url.Values{}
 		q.Set("type", m.SettingString("contentType"))
 		q.Set("src", m.SettingString("source"))
+		target := "/?page=screensaver&" + q.Encode()
+		// Web content opens as a top-level navigation, not an iframe —
+		// sites with CSP frame-ancestors / X-Frame-Options refuse to load
+		// inside an embedded frame.
+		if m.SettingString("contentType") == "web" {
+			if u := m.SettingString("source"); strings.HasPrefix(u, "http://") || strings.HasPrefix(u, "https://") {
+				target = u
+			}
+		}
 		w := app.Window.NewWithOptions(application.WebviewWindowOptions{
 			Title:     "PolyTools Screensaver",
 			Frameless: true,
-			URL:       "/?page=screensaver&" + q.Encode(),
+			URL:       target,
 			X:         int(mr.Left),
 			Y:         int(mr.Top),
 			Width:     int(mr.Width()),
